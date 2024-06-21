@@ -1,25 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
-namespace ASI.Basecode.Services.ServiceModels
+namespace ASI.Basecode.WebApp.Models
 {
     public class UserViewModel
     {
+        /// <summary>User ID</summary>
+        [JsonPropertyName("userId")]
+        public int Id { get; set; }
+
+        /// <summary>Username</summary>
+        [JsonPropertyName("username")]
         [Required(ErrorMessage = "Username is required.")]
-        public string UserId { get; set; }
+        public string Username { get; set; }
 
-        [Required(ErrorMessage = "Name is required.")]
-        public string Name { get; set; }
+        /// <summary>Email address</summary>
+        [JsonPropertyName("email")]
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email format.")]
+        public string Email { get; set; }
 
+        /// <summary>Password</summary>
+        [JsonPropertyName("password")]
         [Required(ErrorMessage = "Password is required.")]
         public string Password { get; set; }
 
-        [Required(ErrorMessage = "Confirmation Password is required.")]
-        [Compare("Password", ErrorMessage = "Password and Confirmation Password must match.")]
-        public string ConfirmPassword { get; set; }
+
+        /// <summary>Role ID</summary>
+        [JsonPropertyName("roleId")]
+        [Required(ErrorMessage = "Role is required.")]
+        public int RoleId { get; set; }
     }
 }
