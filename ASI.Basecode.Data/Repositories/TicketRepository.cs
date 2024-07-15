@@ -41,20 +41,7 @@ namespace ASI.Basecode.Data.Repositories
         /// Get all tickets
         /// </summary>
         /// <returns>List Ticket</returns>
-        public async Task<List<Ticket>> GetAllAsync()
-        {
-            var tickets = await GetTicketsWithIncludes().ToListAsync();
-            return tickets;
-        }
-        /// <summary>
-        /// Retrieves all Non Asycn.
-        /// </summary>
-        /// <returns></returns>
-        public IQueryable<Ticket> RetrieveAll() { 
-            var tickets = GetTicketsWithIncludes();
-            return tickets;
-        }
-        public async Task<List<Ticket>> GetAllAsync() => 
+        public async Task<List<Ticket>> GetAllAsync() =>
             await GetTicketsWithIncludes().ToListAsync();
 
         /// <summary>

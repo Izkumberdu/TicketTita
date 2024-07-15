@@ -511,7 +511,7 @@ namespace ASI.Basecode.Services.Services
         public IEnumerable<TicketViewModel> GetUnresolvedTicketsOlderThan(TimeSpan timeSpan)
         {
             var cutoffTime = DateTime.Now.Subtract(timeSpan);
-            var unresolvedTickets = _repository.RetrieveAll()
+            var unresolvedTickets = _repository.GetAllAsync().Result
                 .Where(t => (t.ResolvedDate == null) && t.CreatedDate <= cutoffTime && (t.User.UserId != null))
                 .ToList();
 
