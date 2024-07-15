@@ -44,6 +44,8 @@ namespace ASI.Basecode.WebApp
                 CreateMap<KnowledgeBaseViewModel, KnowledgeBaseArticle>();
                 CreateMap<KnowledgeBaseArticle, KnowledgeBaseViewModel>();
                 CreateMap<IEnumerable<KnowledgeBaseViewModel>, IEnumerable<KnowledgeBaseArticle>>();
+                CreateMap<PerformanceReport, PerformanceReportViewModel>();
+                CreateMap<PerformanceReportViewModel, PerformanceReport>();
             }
         }
     }

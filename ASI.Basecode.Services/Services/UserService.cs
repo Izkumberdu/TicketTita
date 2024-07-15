@@ -140,7 +140,7 @@ namespace ASI.Basecode.Services.Services
             }
 
             updatedUser.Password = PasswordManager.EncryptPassword(updatedUser.Password);
-            _userRepository.Update(updatedUser);
+            
 
             if (model.RoleId != "Admin")
             {
@@ -166,6 +166,7 @@ namespace ASI.Basecode.Services.Services
                     _adminRepository.Add(newAdmin);
                 }
             }
+            _userRepository.Update(updatedUser);
         }
         /// <summary>
         /// Deletes the specified user identifier.

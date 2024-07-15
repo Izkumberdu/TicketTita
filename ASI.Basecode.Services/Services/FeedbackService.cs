@@ -15,6 +15,7 @@ namespace ASI.Basecode.Services.Services
     {
         private readonly IFeedbackRepository _repository;
         private readonly ITicketRepository _ticketRepository;
+        private readonly IPerformanceReportService _performanceReportService;
         private readonly IMapper _mapper;
 
         /// <summary>
@@ -24,11 +25,13 @@ namespace ASI.Basecode.Services.Services
         /// <param name="mapper">The mapper.</param>
         public FeedbackService(IFeedbackRepository repository,
                             ITicketRepository ticketRepository,
-                            IMapper mapper, ILogger<FeedbackService> logger)
+                            IMapper mapper, ILogger<FeedbackService> logger,
+                            IPerformanceReportService performanceReportService)
         {
             _mapper = mapper;
             _repository = repository;
             _ticketRepository = ticketRepository;
+            _performanceReportService = performanceReportService;
         }
 
         /// <summary>
@@ -57,6 +60,7 @@ namespace ASI.Basecode.Services.Services
                     user.Feedbacks.Add(newFeedback);
 
                     await _repository.AddAsync(newFeedback);
+                    await _performanceReportService.UpdatePerformanceReportAsync(feedback.Ticket.TicketAssignment.Team);
                 }
             }
         }

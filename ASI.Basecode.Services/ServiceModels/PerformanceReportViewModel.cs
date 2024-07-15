@@ -1,15 +1,14 @@
-﻿using System;
+﻿using ASI.Basecode.Data.Models;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ASI.Basecode.Data.Models
+namespace ASI.Basecode.Services.ServiceModels
 {
-    public partial class PerformanceReport
+    public class PerformanceReportViewModel
     {
-        public PerformanceReport()
-        {
-            TeamMembers = new HashSet<TeamMember>();
-        }
-
         public string ReportId { get; set; }
         public string UserId { get; set; }
         public int ResolvedTickets { get; set; }

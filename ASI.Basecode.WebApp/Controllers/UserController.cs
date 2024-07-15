@@ -16,13 +16,15 @@ namespace ASI.Basecode.WebApp.Controllers
     public class UserController : ControllerBase<UserController>
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService,
+        private readonly IPerformanceReportService _performanceReportService;
+        public UserController(IUserService userService, IPerformanceReportService performanceReportService, 
              IHttpContextAccessor httpContextAccessor,
                                ILoggerFactory loggerFactory,
                                IConfiguration configuration,
                                IMapper mapper = null) : base(httpContextAccessor, loggerFactory, configuration, mapper)
         {
             _userService = userService;
+            _performanceReportService = performanceReportService;
         }
 
         /// <summary>
@@ -150,6 +152,13 @@ namespace ASI.Basecode.WebApp.Controllers
         {
             var SelectedUser = _userService.RetrieveAll().Where(s => s.UserId == SelectedUserId).FirstOrDefault();
             return View(SelectedUser);
+        }
+
+        [HttpGet]
+        public IActionResult GetPerformanceReport(string userId)
+        {
+            var performanceReport = _performanceReportService.GetPerformanceReportByUserId(userId);
+            return PartialView("_PerformanceReportPartial", performanceReport);
         }
         #endregion
 

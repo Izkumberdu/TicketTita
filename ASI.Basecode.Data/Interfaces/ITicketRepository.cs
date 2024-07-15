@@ -12,7 +12,6 @@ namespace ASI.Basecode.Data.Interfaces
         Task UpdateAsync(Ticket ticket);
         Task DeleteAsync(Ticket ticket);
 
-        IQueryable<Ticket> RetrieveAll();
         Task AddAttachmentAsync(Attachment attachment);
         Task RemoveAttachmentAsync(Attachment attachment);
         Task AssignTicketAsync(TicketAssignment assignment);
@@ -41,5 +40,6 @@ namespace ASI.Basecode.Data.Interfaces
         Task NotificationDeleteAsync(string id);
         Task<Feedback> FeedbackFindByTicketIdAsync(string id);
         Task<Admin> AdminFindByIdAsync(string id);
+        Task<List<Ticket>> GetResolvedTicketsByUserIdAsync(string userId);
     }
 }

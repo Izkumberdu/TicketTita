@@ -11,14 +11,16 @@ namespace ASI.Basecode.Data.Repositories
     {
         private readonly List<Role> _roles;
         private readonly List<Admin> _admins;
+        private readonly IPerformanceReportRepository _performanceReportRepository;
         /// <summary>
         /// Initializes a new instance of the <see cref="UserRepository"/> class.
         /// </summary>
         /// <param name="unitOfWork">The unit of work.</param>
-        public UserRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
+        public UserRepository(IUnitOfWork unitOfWork, IPerformanceReportRepository performanceReportRepository) : base(unitOfWork)
         {
             _roles = GetRoles().ToList();
             _admins = GetAdmins().ToList();
+            _performanceReportRepository = performanceReportRepository;
         }
 
         /// <summary>
@@ -47,6 +49,11 @@ namespace ASI.Basecode.Data.Repositories
 
             this.GetDbSet<User>().Add(model);
             UnitOfWork.SaveChanges();
+
+            if (model.RoleId.Equals("Support Agent"))
+            {
+                AddNewPerformanceReport(model.UserId);
+            }
         }
         /// <summary>
         /// Updates the specified model.
@@ -57,6 +64,15 @@ namespace ASI.Basecode.Data.Repositories
             SetNavigation(model);
             this.GetDbSet<User>().Update(model);
             UnitOfWork.SaveChanges();
+
+            // Update performance report if user role changes to or from support agent
+            if (model.RoleId.Equals("Support Agent"))
+            {
+                if (_performanceReportRepository.FindByUserId(model.UserId) == null)
+                {
+                    AddNewPerformanceReport(model.UserId);
+                }
+            }
         }
         /// <summary>
         /// Deletes the specified user identifier.
@@ -65,6 +81,11 @@ namespace ASI.Basecode.Data.Repositories
         public void Delete(string UserId)
         {
             var userToDelete = this.GetDbSet<User>().FirstOrDefault(s => s.UserId == UserId);
+            /*var reportToDelete = this.GetDbSet<PerformanceReport>().FirstOrDefault(r => r.UserId == UserId);
+            if (reportToDelete != null)
+            {
+                _performanceReportRepository.DeleteById(UserId);
+            }*/
             if (userToDelete != null)
             {
                 this.GetDbSet<User>().Remove(userToDelete);
@@ -137,6 +158,56 @@ namespace ASI.Basecode.Data.Repositories
             user.UpdatedByNavigation = _admins.SingleOrDefault(a => a.AdminId == user.UpdatedBy);
         }
         #endregion
+
+
+        private void AddNewPerformanceReport(string userId)
+        {
+            _performanceReportRepository.Add(new PerformanceReport
+            {
+                ReportId = Guid.NewGuid().ToString(),
+                UserId = userId,
+                ResolvedTickets = 0, // Initial value for resolved tickets
+                AverageResolutionTime = 0.0, // Initial value for average resolution time
+                AssignedDate = DateTime.Now // Current date and time
+            });
+        }
+/*        private void AssociatePerformanceReportWithTeamMember(string userId)
+        {
+            var agent = this.GetDbSet<User>().FirstOrDefault(tm => tm.UserId == userId);
+            if (agent != null)
+            {
+                var existingPerformanceReport = this.GetDbSet<PerformanceReport>().FirstOrDefault(pr => pr.UserId == userId);
+
+                if (existingPerformanceReport == null)
+                {
+                    existingPerformanceReport = new PerformanceReport
+                    {
+                        ReportId = Guid.NewGuid().ToString(),
+                        UserId = userId,
+                        ResolvedTickets = 0, // Initial value for resolved tickets
+                        AverageResolutionTime = 0.0, // Initial value for average resolution time
+                        AssignedDate = DateTime.Now // Current date and time
+                    };
+
+                    _performanceReportRepository.AddAsync(existingPerformanceReport);
+                }
+
+                agent.Report = existingPerformanceReport;
+                this.GetDbSet<TeamMember>().Update(teamMember);
+                UnitOfWork.SaveChanges();
+            }
+        }
+
+        private void DisassociatePerformanceReportFromTeamMember(string userId)
+        {
+            var teamMember = this.GetDbSet<TeamMember>().FirstOrDefault(tm => tm.UserId == userId);
+            if (teamMember != null)
+            {
+                teamMember.Report = null;
+                this.GetDbSet<TeamMember>().Update(teamMember);
+                UnitOfWork.SaveChanges();
+            }
+        }*/
     }
 
 }

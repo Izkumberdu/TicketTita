@@ -104,6 +104,11 @@
                         @Html.ActionLink("", "Update", new { SelectedUserId = item.UserId }, new { @class = "fas fa-edit action-icon" })
                         @Html.ActionLink("", "Details", new { SelectedUserId = item.UserId }, new { @class = "fas fa-info-circle action-icon" })
                         <a href="javascript:void(0);" onclick="displayDeleteModal('@item.UserId')" class="fas fa-trash-alt action-icon"></a>
+                        @if (item.RoleId.Equals("Support Agent")) {
+                            <button type="button" class="btn btn-info btn-sm" onclick="loadPerformanceReport('@item.UserId')">
+                                View Performance
+                            </button>
+                        }
                     </td>
 
                 </tr>
@@ -136,12 +141,42 @@
     </div>
 </div>
 
+<!-- Performance Report Modal -->
+<div class="modal fade" id="performanceReportModal" tabindex="-1" role="dialog" aria-labelledby="performanceReportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="performanceReportModalLabel">Performance Report</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="performanceReportContent">
+                    <!-- Performance report content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         var itemId;
         function displayDeleteModal(id) {
             itemId = id;
             $('#deleteModal').modal('show');
+        }
+        function loadPerformanceReport(userId) {
+            $.ajax({
+                url: '@Url.Action("GetPerformanceReport", "User")',
+                type: 'GET',
+                data: { userId: userId },
+                success: function (data) {
+                    $('#performanceReportContent').html(data);
+                    $('#performanceReportModal').modal('show');
+                }
+            });
         }
         $('#confirmDeleteBtn').on('click', function () {
             $.ajax({

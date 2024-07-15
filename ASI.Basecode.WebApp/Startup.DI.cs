@@ -41,6 +41,7 @@ namespace ASI.Basecode.WebApp
             this._services.AddScoped<IUserService, UserService>();
             this._services.AddScoped<IKnowledgeBaseService, KnowledgeBaseService>();
             this._services.AddScoped<INotificationService, NotificationService>();
+            this._services.AddScoped<IPerformanceReportService, PerformanceReportService>();
 
 
             // Repositories
@@ -52,6 +53,7 @@ namespace ASI.Basecode.WebApp
             this._services.AddScoped<IAdminRepository, AdminRepository>();
             this._services.AddScoped<IKnowledgeBaseRepository, KnowledgeBaseRepository>();
             this._services.AddScoped<INotificationRepository, NotificationRepository>();
+            this._services.AddScoped<IPerformanceReportRepository, PerformanceReportRepository>();
 
             // Manager Class
             this._services.AddScoped<SignInManager>();

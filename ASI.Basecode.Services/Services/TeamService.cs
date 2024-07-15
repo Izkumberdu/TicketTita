@@ -24,6 +24,7 @@ namespace ASI.Basecode.Services.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<TeamService> _logger;
         private readonly INotificationService _notificationService;
+        private readonly IPerformanceReportRepository _performanceReportRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TeamService"/> class.
@@ -37,13 +38,15 @@ namespace ASI.Basecode.Services.Services
             IMapper mapper,
             INotificationService notificationService,
             ILogger<TeamService> logger,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            IPerformanceReportRepository performanceReportRepository)
         {
             _repository = repository;
             _mapper = mapper;
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
             _notificationService = notificationService;
+            _performanceReportRepository = performanceReportRepository;
         }
 
         public async Task AddAsync(TeamViewModel team)
@@ -123,6 +126,9 @@ namespace ASI.Basecode.Services.Services
                 throw new NoAgentSelectedException("Please select an agent to add to the team.", teamId);
             }
 
+            // Search for an existing PerformanceReport for the agentId
+            var existingPerformanceReport = await _performanceReportRepository.FindByUserIdAsync(agentId);
+
             bool existingTeamMember = await _repository.IsExistingTeamMember(teamId, agentId);
             if (!existingTeamMember)
             {
@@ -133,7 +139,9 @@ namespace ASI.Basecode.Services.Services
                     TeamId = team.TeamId,
                     UserId = agentId,
                     Team = team,
-                    User = agent
+                    User = agent,
+                    ReportId = existingPerformanceReport.ReportId,
+                    Report = existingPerformanceReport
                 };
 
                 team.TeamMembers.Add(teamMember);

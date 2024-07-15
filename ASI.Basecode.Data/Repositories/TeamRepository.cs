@@ -105,7 +105,7 @@ namespace ASI.Basecode.Data.Repositories
         }
 
         public async Task<TeamMember> FindTeamMemberByIdAsync(string id) => 
-            await this.GetDbSet<TeamMember>().FirstOrDefaultAsync(tm => tm.UserId == id);
+            await this.GetDbSet<TeamMember>().Include(tm => tm.Report).FirstOrDefaultAsync(tm => tm.UserId == id);
 
         public async Task<bool> IsExistingTeamMember(string teamId, string agentId) =>
             await GetTeamsWithIncludes()

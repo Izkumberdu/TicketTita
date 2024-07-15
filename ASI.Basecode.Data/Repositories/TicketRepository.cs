@@ -1,5 +1,5 @@
-﻿using ASI.Basecode.Data.Interfaces;
-using ASI.Basecode.Data.Models;
+﻿using ASI.Basecode.Data.Models;
+using ASI.Basecode.Data.Interfaces;
 using Basecode.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -297,6 +297,13 @@ namespace ASI.Basecode.Data.Repositories
         /// <returns>IQueryable string</returns>
         public async Task<IQueryable<string>> GetUserIdsWithTicketsAsync() 
             => await Task.FromResult(this.GetDbSet<Ticket>().Select(x => x.UserId).Distinct());
+
+        public async Task<List<Ticket>> GetResolvedTicketsByUserIdAsync(string userId)
+        {
+            return await GetDbSet<Ticket>()
+                .Where(t => t.TicketAssignment.Team.TeamMembers.Any(tm => tm.UserId.Equals(userId)) && t.StatusType.StatusName.Equals("Resolved"))
+                .ToListAsync();
+        }
         #endregion Get Methods
     }
 }

@@ -231,7 +231,7 @@ namespace ASI.Basecode.Data
 
                 entity.HasIndex(e => e.UserId, "IX_Feedback_UserID");
 
-                entity.HasIndex(e => e.TicketId, "UQ__Feedback__D597FD62E6987208")
+                entity.HasIndex(e => e.TicketId, "UQ__Feedback__D597FD628074C05F")
                     .IsUnique();
 
                 entity.Property(e => e.FeedbackId)
@@ -424,6 +424,11 @@ namespace ASI.Basecode.Data
 
                 entity.HasIndex(e => e.ResolvedTickets, "IX_PerformanceReport_ResolvedTickets");
 
+                entity.HasIndex(e => e.UserId, "IX_PerformanceReport_UserID");
+
+                entity.HasIndex(e => e.UserId, "UQ__Performa__B9BF330675B70C82")
+                    .IsUnique();
+
                 entity.Property(e => e.ReportId)
                     .HasMaxLength(256)
                     .HasColumnName("report_ID");
@@ -436,6 +441,16 @@ namespace ASI.Basecode.Data
                 entity.Property(e => e.AverageResolutionTime).HasColumnName("averageResolutionTime");
 
                 entity.Property(e => e.ResolvedTickets).HasColumnName("resolvedTickets");
+
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasMaxLength(256)
+                    .HasColumnName("user_ID");
+
+                entity.HasOne(d => d.User)
+                    .WithOne(p => p.PerformanceReport)
+                    .HasForeignKey<PerformanceReport>(d => d.UserId)
+                    .HasConstraintName("FK_PerformanceReport_User");
             });
 
             modelBuilder.Entity<PriorityType>(entity =>
@@ -530,7 +545,7 @@ namespace ASI.Basecode.Data
 
                 entity.HasIndex(e => e.UserId, "IX_TeamMember_UserID");
 
-                entity.HasIndex(e => e.UserId, "UQ__TeamMemb__B9BF3306961672EC")
+                entity.HasIndex(e => e.UserId, "UQ__TeamMemb__B9BF3306526DFD5A")
                     .IsUnique();
 
                 entity.Property(e => e.TeamId)
@@ -559,7 +574,6 @@ namespace ASI.Basecode.Data
                 entity.HasOne(d => d.User)
                     .WithOne(p => p.TeamMember)
                     .HasForeignKey<TeamMember>(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_TeamMember_User");
             });
 
@@ -669,7 +683,7 @@ namespace ASI.Basecode.Data
 
                 entity.HasIndex(e => e.TicketId, "IX_TicketAssignment_TicketID");
 
-                entity.HasIndex(e => e.TicketId, "UQ__TicketAs__D597FD62C0A6E3DA")
+                entity.HasIndex(e => e.TicketId, "UQ__TicketAs__D597FD6231B175F4")
                     .IsUnique();
 
                 entity.Property(e => e.AssignmentId)

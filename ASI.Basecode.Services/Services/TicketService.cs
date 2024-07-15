@@ -24,6 +24,7 @@ namespace ASI.Basecode.Services.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<TicketService> _logger;
         private readonly INotificationService _notificationService;
+        private IPerformanceReportService _performanceReportService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TicketService"/> class.
@@ -37,13 +38,16 @@ namespace ASI.Basecode.Services.Services
             IMapper mapper,
             INotificationService notificationService,
             ILogger<TicketService> logger,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor, 
+            IPerformanceReportService performanceReportService)
+
         {
             _repository = repository;
             _mapper = mapper;
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
             _notificationService = notificationService;
+            _performanceReportService = performanceReportService;
         }
 
         #region Ticket CRUD Operations
@@ -113,6 +117,12 @@ namespace ASI.Basecode.Services.Services
                 ticket.PriorityType = await _repository.FindPriorityByIdAsync(ticket.PriorityTypeId);
                 ticket.StatusType = await _repository.FindStatusByIdAsync(ticket.StatusTypeId);
                 ticket.User = await _repository.UserFindByIdAsync(ticket.UserId);
+
+                if (existingTicket.StatusTypeId != ticket.StatusTypeId && ticket.StatusType.StatusName == "Resolved")
+                {
+                    existingTicket.ResolvedDate = DateTime.Now;
+                    await _performanceReportService.UpdatePerformanceReportAsync(existingTicket.TicketAssignment.Team);
+                }
 
                 if (existingTicket.TicketAssignment != null)
                     ticket.TicketAssignment = existingTicket.TicketAssignment; 
