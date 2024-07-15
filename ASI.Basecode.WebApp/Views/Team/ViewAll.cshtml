@@ -1,0 +1,95 @@
+﻿@model IEnumerable<ASI.Basecode.Services.ServiceModels.TeamViewModel>
+
+@{
+    ViewData["Title"] = "ViewAll";
+    await Html.RenderPartialAsync("_DeleteModal");
+}
+
+<h1>Team Management</h1>
+<hr />
+<h4>All Teams</h4>
+<p>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Create">Create Team</a>
+    }
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TeamMembers)
+            </th>
+            <th>
+                Active Tickets
+            </th>
+            <th>
+                Closed / Resolved Tickets
+            </th>
+            <th>
+                Average Completion Time
+            </th>
+            <th>
+                Average Feedback Rating
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @{
+                        var description = item.Description;
+                        if (description != null && description.Length > 20)
+                        {
+                            description = description.Substring(0, 20) + "...";
+                        }
+                        else if (description == null)
+                        {
+                            description = "No description.";
+                        }
+                    }
+                    @description
+                </td>
+                <td>
+                    @(item.TeamMembers?.Count() ?? 0)
+                </td>
+                <td>
+                    @(item.TicketAssignments?.Where(t => t.Ticket.ResolvedDate == null).Count() ?? 0)
+                </td>
+                <td>
+                    @(item.TicketAssignments?.Where(t => t.Ticket.ResolvedDate != null).Count() ?? 0)
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                    @Html.ActionLink("Details", "ViewTeam", new { id = item.TeamId }) |
+                    @Html.ActionLink("Edit", "ViewTeam", new { id = item.TeamId, showModal = "editTeam" }) |
+                    <a href="javascript:void(0);" onclick="displayDeleteModal('@item.TeamId', '@item.Name')">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@*---- Values passed to the js files ----*@
+<input type="hidden" id="createMessage" value="@TempData["CreateMessage"]" />
+<input type="hidden" id="baseUrl" value="@Url.Action("ViewAll", "Team")" />
+<input type="hidden" id="deleteUrl" value="@Url.Action("Delete", "Team")" />
+
+@section Scripts {
+    <script src="~/js/delete.js"></script>
+}

@@ -1,0 +1,75 @@
+﻿@model ASI.Basecode.Services.ServiceModels.TicketViewModel
+
+<div class="modal fade" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="feedbackModalLabel">Provide Feedback</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="feedbackForm" data-url="@Url.Action("ProvideFeedback", "Feedback")">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="userId" name="UserId" value="@Model.UserId" />
+                    <input type="hidden" id="ticketId" name="TicketId" value="@Model.TicketId" />
+                    <div class="form-group">
+                        <label for="rating">Rating</label>
+                        <div class="star-rating">
+                            <input type="radio" id="star5" name="FeedbackRating" value="5" /><label for="star5" title="5 stars"></label>
+                            <input type="radio" id="star4" name="FeedbackRating" value="4" /><label for="star4" title="4 stars"></label>
+                            <input type="radio" id="star3" name="FeedbackRating" value="3" /><label for="star3" title="3 stars"></label>
+                            <input type="radio" id="star2" name="FeedbackRating" value="2" /><label for="star2" title="2 stars"></label>
+                            <input type="radio" id="star1" name="FeedbackRating" value="1" /><label for="star1" title="1 star"></label>
+                        </div>
+                        <span id="ratingError" class="text-danger" style="display: none;">Please select a rating.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="content">Content</label>
+                        <textarea class="form-control" id="content" name="FeedbackContent" rows="3"></textarea>
+                        <span id="contentError" class="text-danger" style="display: none;">Please provide feedback content.</span>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="submitFeedback()">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .star-rating {
+        direction: rtl;
+    }
+
+    .star-rating input[type="radio"] {
+        display: none;
+    }
+
+    .star-rating label {
+        font-size: 2rem;
+        color: #ddd;
+        cursor: pointer;
+    }
+
+    .star-rating label:before {
+        content: '★';
+    }
+
+    .star-rating input[type="radio"]:checked ~ label {
+        color: #f5c518;
+    }
+
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+        color: #f5c518;
+     }
+
+    .star-rating.no-interaction label {
+        cursor: default;
+        pointer-events: none;
+    }
+</style>

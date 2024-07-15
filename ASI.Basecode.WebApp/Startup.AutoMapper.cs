@@ -39,6 +39,8 @@ namespace ASI.Basecode.WebApp
                         .ForMember(dest => dest.Feedback, opt => opt.MapFrom(src => src.Feedback));
                 CreateMap<Feedback, FeedbackViewModel>();
                 CreateMap<FeedbackViewModel, Feedback>();
+                CreateMap<Team, TeamViewModel>();
+                CreateMap<TeamViewModel, Team>();
                 CreateMap<KnowledgeBaseViewModel, KnowledgeBaseArticle>();
                 CreateMap<KnowledgeBaseArticle, KnowledgeBaseViewModel>();
                 CreateMap<IEnumerable<KnowledgeBaseViewModel>, IEnumerable<KnowledgeBaseArticle>>();

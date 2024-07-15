@@ -231,7 +231,7 @@ namespace ASI.Basecode.Data
 
                 entity.HasIndex(e => e.UserId, "IX_Feedback_UserID");
 
-                entity.HasIndex(e => e.TicketId, "UQ__Feedback__D597FD6207FAB226")
+                entity.HasIndex(e => e.TicketId, "UQ__Feedback__D597FD62E6987208")
                     .IsUnique();
 
                 entity.Property(e => e.FeedbackId)
@@ -512,6 +512,8 @@ namespace ASI.Basecode.Data
                     .HasMaxLength(500)
                     .HasColumnName("description");
 
+                entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(100)
@@ -528,7 +530,7 @@ namespace ASI.Basecode.Data
 
                 entity.HasIndex(e => e.UserId, "IX_TeamMember_UserID");
 
-                entity.HasIndex(e => e.UserId, "UQ__TeamMemb__B9BF330695F34A23")
+                entity.HasIndex(e => e.UserId, "UQ__TeamMemb__B9BF3306961672EC")
                     .IsUnique();
 
                 entity.Property(e => e.TeamId)
@@ -667,7 +669,7 @@ namespace ASI.Basecode.Data
 
                 entity.HasIndex(e => e.TicketId, "IX_TicketAssignment_TicketID");
 
-                entity.HasIndex(e => e.TicketId, "UQ__TicketAs__D597FD627C299663")
+                entity.HasIndex(e => e.TicketId, "UQ__TicketAs__D597FD62C0A6E3DA")
                     .IsUnique();
 
                 entity.Property(e => e.AssignmentId)

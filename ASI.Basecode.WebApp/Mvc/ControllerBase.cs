@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ASI.Basecode.Services.Exceptions;
 using static ASI.Basecode.Services.Exceptions.TicketExceptions;
+using static ASI.Basecode.Services.Exceptions.TeamExceptions;
 
 namespace ASI.Basecode.WebApp.Mvc
 {
@@ -228,6 +229,28 @@ namespace ASI.Basecode.WebApp.Mvc
         #endregion Exception Handlers
 
         #region Async Exception Handlers
+        private bool LogAndSetErrorMessage(Exception ex, string actionName)
+        {
+            TempData["ErrorMessage"] = ex.Message.ToString();
+            _logger.LogError(ex, $"Error in {actionName}");
+            return true;
+        }
+
+        private IActionResult HandleRedirect(string actionName, string id = null)
+        {
+            if (actionName == "Create")
+            {
+                return RedirectToAction(actionName);
+            }
+
+            if (actionName == "Delete")
+            {
+                return RedirectToAction("ViewAll");
+            }
+
+            return !string.IsNullOrEmpty(id) ? RedirectToAction(actionName, new { id }) : RedirectToAction(actionName);
+        }
+
         public async Task<IActionResult> HandleExceptionAsync(Func<Task<IActionResult>> action, string actionName)
         {
             try
@@ -235,23 +258,21 @@ namespace ASI.Basecode.WebApp.Mvc
                 StartLog(actionName);
                 return await action();
             }
-            catch (DuplicateTicketException ex)
+            catch (TeamNameAlreadyExistsException ex) when (LogAndSetErrorMessage(ex, actionName))
             {
-                TempData["ErrorMessage"] = ex.Message.ToString();
-                _logger.LogError(ex, $"Error in {actionName}");
                 return RedirectToAction(actionName);
             }
-            catch (NoChangesException ex)
+            catch (DuplicateTicketException ex) when (LogAndSetErrorMessage(ex, actionName))
             {
-                TempData["ErrorMessage"] = ex.Message.ToString();
-                _logger.LogError(ex, $"Error in {actionName}");
+                return RedirectToAction(actionName);
+            }
+            catch (NoChangesException ex) when (LogAndSetErrorMessage(ex, actionName))
+            {
                 return RedirectToAction(actionName, new { id = ex.Id });
             }
-            catch (InvalidFileException ex)
+            catch (InvalidFileException ex) when (LogAndSetErrorMessage(ex, actionName))
             {
-                TempData["ErrorMessage"] = ex.Message.ToString();
-                _logger.LogError(ex, $"Error in {actionName}");
-                return actionName == "Create" ? RedirectToAction(actionName) : RedirectToAction(actionName, new { id = ex.Id });
+                return HandleRedirect(actionName, ex.Id);
             }
             catch (Exception ex)
             {
@@ -271,10 +292,34 @@ namespace ASI.Basecode.WebApp.Mvc
                 StartLog(actionName);
                 return await action();
             }
+            catch (TeamHasUnresolvedTicketsException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message.ToString();
+                _logger.LogError(ex, $"Error in {actionName}");
+                return new JsonResult(new { success = false, error = ex.Message });
+            }
+            catch (TeamHasMembersException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message.ToString();
+                _logger.LogError(ex, $"Error in {actionName}");
+                return new JsonResult(new { success = false, error = ex.Message });
+            }
+            catch (NoChangesException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message.ToString();
+                _logger.LogError(ex, $"Error in {actionName}");
+                return new JsonResult(new { success = false, error = ex.Message });
+            }
+            catch (NoAgentSelectedException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message.ToString();
+                _logger.LogError(ex, $"Error in {actionName}");
+                return new JsonResult(new { success = false, error = ex.Message });
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error in {actionName}");
-                return new JsonResult(new { success = false, error = "An error occurred. Please try again later." });
+                return new JsonResult(new { success = false, error = "An error has occured. Please try again later." });
             }
             finally
             {

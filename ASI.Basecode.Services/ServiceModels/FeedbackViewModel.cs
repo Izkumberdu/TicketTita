@@ -37,10 +37,10 @@ namespace ASI.Basecode.Services.ServiceModels
 
         #region Navigation Properties for Foreign Keys
         [Display(Name = "Ticket")]
-        public TicketViewModel Ticket { get; set; }
+        public Ticket Ticket { get; set; }
 
         [Display(Name = "Submitted By")]
-        public UserViewModel User { get; set; }
+        public User User { get; set; }
         #endregion
     }
 }

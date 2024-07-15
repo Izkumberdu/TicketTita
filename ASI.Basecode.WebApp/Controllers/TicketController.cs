@@ -31,7 +31,6 @@ namespace ASI.Basecode.WebApp.Controllers
         /// <param name="tokenValidationParametersFactory">The token validation parameters factory.</param>
         /// <param name="tokenProviderOptionsFactory">The token provider options factory.</param>
         public TicketController(
-
             IHttpContextAccessor httpContextAccessor,
             ILoggerFactory loggerFactory,
             IConfiguration configuration,
@@ -41,8 +40,8 @@ namespace ASI.Basecode.WebApp.Controllers
             TokenValidationParametersFactory tokenValidationParametersFactory,
             TokenProviderOptionsFactory tokenProviderOptionsFactory) : base(httpContextAccessor, loggerFactory, configuration, mapper)
         {
-            _ticketService = ticketService;
-             this._notificationService = notificationService;
+            this._ticketService = ticketService;
+            this._notificationService = notificationService;
         }
 
         #region GET methods
@@ -76,9 +75,7 @@ namespace ASI.Basecode.WebApp.Controllers
         /// <returns>ViewTicket page</returns>
         [HttpGet]
         [Authorize]
-
-        public async Task<IActionResult> ViewTicket(string id, string notificationId)
-
+        public async Task<IActionResult> ViewTicket(string id, string notificationId, string showModal = null)
         {
             return await HandleExceptionAsync(async () =>
             {
@@ -91,6 +88,7 @@ namespace ASI.Basecode.WebApp.Controllers
                     _notificationService.MarkNotificationAsRead(notificationId);
                 }
 
+                ViewBag.ShowModal = showModal;
                 return View(ticket);
             }, "ViewTicket");
         }
@@ -102,10 +100,8 @@ namespace ASI.Basecode.WebApp.Controllers
         /// <returns>Create page</returns>
         [HttpGet]
         [Authorize(Policy = "Employee")]
-        public async Task<IActionResult> Create()
-        {
-            return await HandleExceptionAsync(async () => View(await _ticketService.InitializeModelAsync("default")), "Create");
-        }
+        public async Task<IActionResult> Create() =>
+            await HandleExceptionAsync(async () => View(await _ticketService.InitializeModelAsync("default")), "Create");
 
         /// <summary>
         /// Shows the page to update the status of a ticket
@@ -113,10 +109,8 @@ namespace ASI.Basecode.WebApp.Controllers
         /// <returns>UpdateStatus page</returns>
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> UpdateStatus()
-        {
-            return await HandleExceptionAsync(async () => View(await _ticketService.InitializeModelAsync("status")), "UpdateStatus");
-        }
+        public async Task<IActionResult> UpdateStatus() =>
+            await HandleExceptionAsync(async () => View(await _ticketService.InitializeModelAsync("status")), "UpdateStatus");
 
         /// <summary>
         /// Shows the page to update the priority of a ticket
@@ -124,10 +118,8 @@ namespace ASI.Basecode.WebApp.Controllers
         /// <returns>UpdatePriority page</returns>
         [HttpGet]
         [Authorize(Policy = "AdminOrAgent")]
-        public async Task<IActionResult> UpdatePriority()
-        {
-            return await HandleExceptionAsync(async () => View(await _ticketService.InitializeModelAsync("priority")), "UpdatePriority");
-        }
+        public async Task<IActionResult> UpdatePriority() =>
+            await HandleExceptionAsync(async () => View(await _ticketService.InitializeModelAsync("priority")), "UpdatePriority");
 
         /// <summary>
         /// Shows the page to assign a ticket
@@ -135,10 +127,8 @@ namespace ASI.Basecode.WebApp.Controllers
         /// <returns>AssignTicket page</returns>
         [HttpGet]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> AssignTicket()
-        {
-            return await HandleExceptionAsync(async () => View(await _ticketService.InitializeModelAsync("assign")), "AssignTicket");
-        }
+        public async Task<IActionResult> AssignTicket() =>
+            await HandleExceptionAsync(async () => View(await _ticketService.InitializeModelAsync("assign")), "AssignTicket");
 
         /// <summary>
         /// Shows the page to reassign a ticket
@@ -146,10 +136,8 @@ namespace ASI.Basecode.WebApp.Controllers
         /// <returns>ReassignTicket page</returns>
         [HttpGet]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> ReassignTicket()
-        {
-            return await HandleExceptionAsync(async () => View(await _ticketService.InitializeModelAsync("reassign")), "ReassignTicket");
-        }
+        public async Task<IActionResult> ReassignTicket() =>
+            await HandleExceptionAsync(async () => View(await _ticketService.InitializeModelAsync("reassign")), "ReassignTicket");
 
         /// <summary>
         /// Shows the page to edit a ticket

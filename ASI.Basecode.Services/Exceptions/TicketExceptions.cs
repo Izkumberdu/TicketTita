@@ -20,6 +20,7 @@ namespace ASI.Basecode.Services.Exceptions
         public class NoChangesException : Exception
         {
             public string Id { get; }
+            public NoChangesException(string message) : base(message) { }
             public NoChangesException(string message, string id) : base(message)
             {
                 Id = id;

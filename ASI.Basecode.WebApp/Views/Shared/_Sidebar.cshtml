@@ -186,18 +186,17 @@
                     Users
                 </a>
             </li>
+            <li class="py-2">
+                <a asp-action="ViewAll" asp-controller="Team" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Team" ? "active" : "")">
+                    <i class="fa fa-ticket px-1"></i>
+                    Team Management
+                </a>
+            </li>
         }
-
         <li class="py-2">
             <a asp-action="ViewAll" asp-controller="Ticket" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Ticket" ? "active" : "")">
                 <i class="fa fa-ticket px-1"></i>
                 Ticket Screen
-            </a>
-        </li>
-        <li class="py-2">
-            <a asp-action="ViewAll" asp-controller="Feedback" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Feedback" ? "active" : "")">
-                <i class="fa fa-ticket px-1"></i>
-                Feedbacks
             </a>
         </li>
         <li class="py-2">

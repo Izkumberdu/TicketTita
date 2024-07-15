@@ -1,4 +1,5 @@
 ﻿using ASI.Basecode.Services.ServiceModels;
+using System;
 using System.Collections.Generic;
 
 namespace ASI.Basecode.Services.Interfaces
@@ -7,12 +8,12 @@ namespace ASI.Basecode.Services.Interfaces
     {
         IEnumerable<NotificationViewModel> RetrieveAll(string userId);
         void MarkNotificationAsRead(string notificationId);
-        void MarkAllNotificationsAsRead(string ticketId);
+        void MarkAllNotificationsAsRead(string UserId);
         void AddNotification(string ticketId, string description, string notificationTypeId,string UserId, string title);
         void GetUnreadNotifications(string userId);
-
+        public void MarkAllNotificationsAsUnread(string UserId);
+        void MarkNotificationAsUnread(string notificationId);
         bool HasUnreadNotifications(string userId);
-        void UpdateNotification(string notificationId);
         void DeleteNotification(string notificationId);
     }
 }

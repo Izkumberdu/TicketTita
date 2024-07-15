@@ -11,6 +11,8 @@ namespace ASI.Basecode.Data.Interfaces
         Task AddAsync(Ticket ticket);
         Task UpdateAsync(Ticket ticket);
         Task DeleteAsync(Ticket ticket);
+
+        IQueryable<Ticket> RetrieveAll();
         Task AddAttachmentAsync(Attachment attachment);
         Task RemoveAttachmentAsync(Attachment attachment);
         Task AssignTicketAsync(TicketAssignment assignment);
@@ -25,6 +27,7 @@ namespace ASI.Basecode.Data.Interfaces
         Task<CategoryType> FindCategoryByIdAsync(string id);
         Task<PriorityType> FindPriorityByIdAsync(string id);
         Task<StatusType> FindStatusByIdAsync(string id);
+        Task<IQueryable<Notification>> FindNotificationsByTicketIdAsync(string id);
         Task<IQueryable<CategoryType>> GetCategoryTypesAsync();
         Task<IQueryable<PriorityType>> GetPriorityTypesAsync();
         Task<IQueryable<StatusType>> GetStatusTypesAsync();
@@ -35,6 +38,7 @@ namespace ASI.Basecode.Data.Interfaces
         Task<IQueryable<User>> UserGetAllAsync();
         Task<User> UserFindByIdAsync(string id);
         Task FeedbackDeleteAsync(Feedback feedback);
+        Task NotificationDeleteAsync(string id);
         Task<Feedback> FeedbackFindByTicketIdAsync(string id);
         Task<Admin> AdminFindByIdAsync(string id);
     }

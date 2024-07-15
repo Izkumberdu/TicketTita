@@ -33,7 +33,7 @@ namespace ASI.Basecode.Services.Interfaces
         Task<IEnumerable<TicketAssignment>> GetTicketAssignmentsAsync();
         Task<TicketViewModel> InitializeModelAsync(string type);
         string ExtractAgentId(string id);
-
+        IEnumerable<TicketViewModel> GetUnresolvedTicketsOlderThan(TimeSpan timeSpan);
         Task<IEnumerable<string>> GetUserIdsWithTicketsAsync();
         Task<IEnumerable<User>> UserGetAllAsync();
 

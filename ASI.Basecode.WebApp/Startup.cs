@@ -17,6 +17,11 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IO;
 using System.Text;
+using Quartz;
+using Quartz.Spi;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using ASI.Basecode.Services.Services;
+
 
 namespace ASI.Basecode.WebApp
 {
@@ -92,6 +97,20 @@ namespace ASI.Basecode.WebApp
 
             services.AddControllersWithViews();
             services.AddRazorPages().AddRazorRuntimeCompilation();
+
+            services.AddQuartz(q =>
+            {
+                q.UseMicrosoftDependencyInjectionJobFactory();
+
+                var jobKey = new JobKey("JobService");
+                q.AddJob<JobService>(opts => opts.WithIdentity(jobKey));
+                q.AddTrigger(opts => opts
+                    .ForJob(jobKey)
+                    .WithIdentity("ReminderJob-trigger")
+                    .WithCronSchedule("0 */30 * * * ?")); // Every 30 minutes
+            });
+            services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+
 
             //Configuration
             services.Configure<TokenAuthentication>(Configuration.GetSection("TokenAuthentication"));

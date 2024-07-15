@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "ViewTicket";
+    await Html.RenderPartialAsync("_FeedbackModal", Model);
 }
 
 <h1>View Ticket</h1>
@@ -104,8 +105,62 @@
             }
         </dd>
     </dl>
+    @if (Model.Feedback != null)
+    {
+        <h4>Feedback</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">Rating</dt>
+            <dd class="col-sm-10">
+                <div class="star-rating no-interaction">
+                    @{
+                        for (int i = 5; i >= 1; i--)
+                        {
+                            <input disabled type="radio" id="star-@i" name="FeedbackRating"
+                                   value="@i" @(Model.Feedback.FeedbackRating == i ? "checked" :
+                       (Model.Feedback.FeedbackRating == 0 && i == 1 ? "checked" : "")) />
+                            <label for="star-@i" title="@i stars"></label>
+                        }
+                    }
+                </div>
+            </dd>
+            <dt class="col-sm-2">Content</dt>
+            <dd class="col-sm-10">@Model.Feedback.FeedbackContent</dd>
+            <dt class="col-sm-2">Submitted By</dt>
+            <dd class="col-sm-10">@Model.Feedback.User.Name</dd>
+            <dt class="col-sm-2">Created Date</dt>
+            <dd class="col-sm-10">@Model.Feedback.CreatedDate</dd>
+        </dl>
+    }
 </div>
+
 <div>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.TicketId }) |
+    @if (Model.StatusType.StatusName != "Resolved")
+    {
+        @Html.ActionLink("Edit", "Edit", new { id = Model.TicketId })
+        <text> | </text>
+    }
     <a asp-action="ViewAll">Back to List</a>
+    @if (Model.Feedback == null && User.IsInRole("Employee") && Model.StatusType.StatusName == "Resolved")
+    {
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#feedbackModal">
+            Provide Feedback
+        </button>
+    }
 </div>
+
+@section Scripts {
+    <script src="~/js/feedback.js"></script>
+    <script>
+        $(document).ready(function() {
+            var successMessage = '@TempData["SuccessMessage"]';
+            var errorMessage = '@TempData["ErrorMessage"]';
+
+            if (successMessage) {
+                toastr.success(successMessage);
+            } else if (errorMessage) {
+                toastr.error(errorMessage);
+            }
+        });
+    </script>
+}
