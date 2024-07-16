@@ -13,9 +13,12 @@
     string updatedTimeSortParm = sortOrder == "UpdatedTime" ? "updatedTime_desc" : "UpdatedTime";
 }
 
+@section styles {
+    <link rel="stylesheet" href="~/css/user.css" />
+}
+
 <div class="d-flex justify-content-between nav-header">
     <h1 class=" display-6">Registered Users</h1>
-
     <div class="d-flex justify-content-between">
         <form method="get" asp-action="Index">
             <div class="form-group input-group">
@@ -29,22 +32,18 @@
             </div>
         </form>
         <div class="mx-3">
-                <a asp-action="Create" class="btn btn-primary btn-radius px-3">
-                    <i class="fa fa-plus"></i>
-                    New User
-                </a>
+            <a asp-action="Create" class="btn btn-primary btn-radius px-3">
+                <i class="fa fa-plus"></i>
+                New User
+            </a>
         </div>
     </div>
-
 </div>
 
-<div class="container-fluid my-3">
+<div class="container-fluid px-4 py-3">
     <table class="table table-white">
         <thead>
             <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.UserId)
-                </th>
                 <th>
                     <a asp-action="Index" asp-route-sortOrder="@nameSortParm" asp-route-currentFilter="@currentFilter" class="text-black">
                         @Html.DisplayNameFor(model => model.Name)
@@ -64,12 +63,6 @@
                     </a>
                 </th>
                 <th>
-                    <a asp-action="Index" asp-route-sortOrder="@createdTimeSortParm" asp-route-currentFilter="@currentFilter" class="text-black">
-                        @Html.DisplayNameFor(model => model.CreatedTime)
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </a>
-                </th>
-                <th>
                     <a asp-action="Index" asp-route-sortOrder="@updatedTimeSortParm" asp-route-currentFilter="@currentFilter" class="text-black">
                         @Html.DisplayNameFor(model => model.UpdatedTime)
                         <i class="fa-solid fa-chevron-down"></i>
@@ -82,10 +75,7 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.UserId)
-                    </td>
-                    <td>
+                    <td class="font-weight-bold">
                         @Html.DisplayFor(modelItem => item.Name)
                     </td>
                     <td>
@@ -95,14 +85,12 @@
                         @Html.DisplayFor(modelItem => item.RoleId)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.CreatedTime)
-                    </td>
-                    <td>
                         @Html.DisplayFor(modelItem => item.UpdatedTime)
                     </td>
                     <td>
                         @Html.ActionLink("", "Update", new { SelectedUserId = item.UserId }, new { @class = "fas fa-edit action-icon" })
-                        @Html.ActionLink("", "Details", new { SelectedUserId = item.UserId }, new { @class = "fas fa-info-circle action-icon" })
+                        @* @Html.ActionLink("", "Details", new { SelectedUserId = item.UserId }, new { @class = "fas fa-info-circle action-icon" }) *@
+                        @Html.ActionLink("", "Details", new { SelectedUserId = item.UserId }, new { @class = "fas fa-info-circle action-icon", data_toggle = "modal", data_target = "#userDetailsModal-" + @item.UserId })
                         <a href="javascript:void(0);" onclick="displayDeleteModal('@item.UserId')" class="fas fa-trash-alt action-icon"></a>
                         @if (item.RoleId.Equals("Support Agent")) {
                             <button type="button" class="btn btn-info btn-sm" onclick="loadPerformanceReport('@item.UserId')">
@@ -110,14 +98,85 @@
                             </button>
                         }
                     </td>
-
                 </tr>
             }
         </tbody>
     </table>
 </div>
 
-<!-- Delete Modal -->
+<!-- Add User Modal -->
+<div class="modal fixed-right fade" id="" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-aside" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <i class="fa fa-arrow-left-long" data-dismiss="modal"></i>
+                <h5 class="modal-title p-3" id="">Add User</h5>
+                <div id=""></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fixed-right fade" id="" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-aside" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <i class="fa fa-arrow-left-long" data-dismiss="modal"></i>
+                <h5 class="modal-title p-3" id="">Edit User</h5>
+                <div id=""></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User Details Modal -->
+@foreach (var item in Model)
+{
+    <div class="modal fixed-right fade" id="userDetailsModal-@item.UserId" tabindex="-1" role="dialog" aria-labelledby="userDetailsModalLabel-@item.UserId" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-aside" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <i class="fa fa-arrow-left-long" data-dismiss="modal"></i>
+                    <h5 class="modal-title p-3" id="userDetailsModalLabel-@item.UserId">User Details</h5>
+                    <dl class="row px-4 py-2">
+                        <dt class="col-sm-4">User ID</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => item.UserId)</dd>
+
+                        <dt class="col-sm-4">Name</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => item.Name)</dd>
+
+                        <dt class="col-sm-4">Email</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => item.Email)</dd>
+
+                        <dt class="col-sm-4">Password</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => item.Password)</dd>
+
+                        <dt class="col-sm-4">Role ID</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => item.RoleId)</dd>
+
+                        <dt class="col-sm-4">Created by</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => item.CreatedBy)</dd>
+
+                        <dt class="col-sm-4">Time Created</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => item.CreatedTime)</dd>
+
+                        <dt class="col-sm-4">Updated by</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => item.UpdatedBy)</dd>
+
+                        <dt class="col-sm-4">Time Updated</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => item.UpdatedTime)</dd>
+                    </dl>
+                    <div class="d-flex justify-content-center mt-5">
+                        <a asp-action="Update" asp-route-SelectedUserId="@item.UserId" class="btn btn-white btn-radius">Edit</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Delete User Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">

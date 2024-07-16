@@ -24,221 +24,226 @@
     var users = ViewBag.Users as List<string>;
 }
 
-<h1>View All</h1>
+<h1 class="nav-header display-6">Tickets</h1>
 
-<p>
-    @if (User.IsInRole("Employee"))
-    {
-        <a asp-action="Create">Create New</a>
-        <text> | </text>
-    }
-    <a asp-action="UpdateStatus">Update Status</a>
-    @if (User.IsInRole("Admin") || User.IsInRole("Support Agent"))
-    {
-        <text> | </text>
-        <a asp-action="UpdatePriority">Update Priority</a>
-        @if (User.IsInRole("Admin"))
+<div class="container-fluid px-4 py-3">
+    <p>
+        @if (User.IsInRole("Employee"))
+        {
+            <a asp-action="Create">Create New</a>
+            <text> | </text>
+        }
+        <a asp-action="UpdateStatus">Update Status</a>
+        @if (User.IsInRole("Admin") || User.IsInRole("Support Agent"))
         {
             <text> | </text>
-            <a asp-action="AssignTicket">Assign</a>
-            <text> | </text>
-            <a asp-action="ReassignTicket">Reassign</a>
-        }
-    }
-</p>
-
-<form method="get" asp-action="ViewAll">
-    <label for="filterBy">Filter By: </label>
-    <select asp-for="@filterBy" id="filterBy" name="filterBy">
-        <option value="" >No Filter</option>
-        <option value="priority">Priority</option>
-        <option value="status">Status</option>
-        <option value="category">Category</option>
-        <option value="user">User</option>
-    </select>
-    <select id="filterValue" name="filterValue" style="display: none;"></select>
-    <button type="submit">Apply Filter</button>
-</form>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                
-                <a asp-action="ViewAll" asp-route-sortBy="@sortById" asp-route-filterBy="@filterBy" asp-route-filterValue="@filterValue" class="text-black">
-                    @Html.DisplayNameFor(model => model.TicketId)
-                    @(string.IsNullOrEmpty(sortBy) ? Html.Raw("<i class='fa-solid fa-sort-up'></i>") : (sortBy == "id_desc" ? Html.Raw("<i class='fa-solid fa-sort-down'></i>") : Html.Raw("<i class='fa-solid fa-sort'></i>")))
-                </a>
-            </th>
-            <th>
-                <a asp-action="ViewAll" asp-route-sortBy="@sortBySubject" asp-route-filterBy="@filterBy" asp-route-filterValue="@filterValue" class="text-black">
-                    @Html.DisplayNameFor(model => model.Subject)
-                    @(sortBy == "subject" ? Html.Raw("<i class='fa-solid fa-sort-up'></i>") : (sortBy == "subject_desc" ? Html.Raw("<i class='fa-solid fa-sort-down'></i>") : Html.Raw("<i class='fa-solid fa-sort'></i>")))
-                </a>
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IssueDescription)
-            </th>
-            @if (!User.IsInRole("Employee"))
+            <a asp-action="UpdatePriority">Update Priority</a>
+            @if (User.IsInRole("Admin"))
             {
-                <th>
-                    <a asp-action="ViewAll" asp-route-sortBy="@sortByUser" asp-route-filterBy="@filterBy" asp-route-filterValue="@filterValue" class="text-black">
-                        @Html.DisplayNameFor(model => model.User)
-                        @(sortBy == "user" ? Html.Raw("<i class='fa-solid fa-sort-up'></i>") : (sortBy == "user_desc" ? Html.Raw("<i class='fa-solid fa-sort-down'></i>") : Html.Raw("<i class='fa-solid fa-sort'></i>")))
-                    </a>
-                </th>
+                <text> | </text>
+                <a asp-action="AssignTicket">Assign</a>
+                <text> | </text>
+                <a asp-action="ReassignTicket">Reassign</a>
             }
-            <th>
-                <a asp-action="ViewAll" asp-route-sortBy="@sortByCreatedDate" asp-route-filterBy="@filterBy" asp-route-filterValue="@filterValue" class="text-black">
-                    @Html.DisplayNameFor(model => model.CreatedDate)
-                    @(sortBy == "created" ? Html.Raw("<i class='fa-solid fa-sort-up'></i>") : (sortBy == "created_desc" ? Html.Raw("<i class='fa-solid fa-sort-down'></i>") : Html.Raw("<i class='fa-solid fa-sort'></i>")))
-                </a>
-            </th>
-            <th>
-                <a asp-action="ViewAll" asp-route-sortBy="@sortByUpdatedDate" asp-route-filterBy="@filterBy" asp-route-filterValue="@filterValue" class="text-black">
-                    @Html.DisplayNameFor(model => model.UpdatedDate)
-                    @(sortBy == "updated" ? Html.Raw("<i class='fa-solid fa-sort-up'></i>") : (sortBy == "updated_desc" ? Html.Raw("<i class='fa-solid fa-sort-down'></i>") : Html.Raw("<i class='fa-solid fa-sort'></i>")))
-                </a>
-            </th>
-            <th>
-                <a asp-action="ViewAll" asp-route-sortBy="@sortByResolvedDate" asp-route-filterBy="@filterBy" asp-route-filterValue="@filterValue" class="text-black">
-                    @Html.DisplayNameFor(model => model.ResolvedDate)
-                    @(sortBy == "resolved" ? Html.Raw("<i class='fa-solid fa-sort-up'></i>") : (sortBy == "resolved_desc" ? Html.Raw("<i class='fa-solid fa-sort-down'></i>") : Html.Raw("<i class='fa-solid fa-sort'></i>")))
-                </a>
-            </th>
-            <th>
-                <a asp-action="ViewAll" asp-route-sortBy="@sortByCategory" asp-route-filterBy="@filterBy" asp-route-filterValue="@filterValue" class="text-black">
-                    @Html.DisplayNameFor(model => model.CategoryType)
-                    @(sortBy == "category" ? Html.Raw("<i class='fa-solid fa-sort-up'></i>") : (sortBy == "category_desc" ? Html.Raw("<i class='fa-solid fa-sort-down'></i>") : Html.Raw("<i class='fa-solid fa-sort'></i>")))
-                </a>
-            </th>
-            <th>
-                <a asp-action="ViewAll" asp-route-sortBy="@sortByPriority" asp-route-filterBy="@filterBy" asp-route-filterValue="@filterValue" class="text-black">
-                    @Html.DisplayNameFor(model => model.PriorityType)
-                    @(sortBy == "priority" ? Html.Raw("<i class='fa-solid fa-sort-up'></i>") : (sortBy == "priority_desc" ? Html.Raw("<i class='fa-solid fa-sort-down'></i>") : Html.Raw("<i class='fa-solid fa-sort'></i>")))
-                </a>
-            </th>
-            <th>
-                <a asp-action="ViewAll" asp-route-sortBy="@sortByStatus" asp-route-filterBy="@filterBy" asp-route-filterValue="@filterValue" class="text-black">
-                    @Html.DisplayNameFor(model => model.StatusType)
-                    @(sortBy == "status" ? Html.Raw("<i class='fa-solid fa-sort-up'></i>") : (sortBy == "status_desc" ? Html.Raw("<i class='fa-solid fa-sort-down'></i>") : Html.Raw("<i class='fa-solid fa-sort'></i>")))
-                </a>
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Attachment)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    
-    <tbody>
-        @if (!Model.Any())
-        {
-            <tr>
-                <td colspan="13" class="alert alert-warning text-center" role="alert">
-                    @(string.IsNullOrEmpty(filterBy) ? Html.Raw("No tickets found") : Html.Raw("No tickets found matching the criteria"))
-                </td>
-            </tr>
         }
-        else
-        {
-            @foreach (var item in Model)
-            {
+    </p>
+
+    <form method="get" asp-action="ViewAll">
+        <label for="filterBy">Filter By: </label>
+        <select asp-for="@filterBy" id="filterBy" name="filterBy">
+            <option value="">No Filter</option>
+            <option value="priority">Priority</option>
+            <option value="status">Status</option>
+            <option value="category">Category</option>
+            <option value="user">User</option>
+        </select>
+        <select id="filterValue" name="filterValue" style="display: none;"></select>
+        <button type="submit">Apply Filter</button>
+    </form>
+
+    <div class="py-3">
+        <table class="table table-white">
+            <thead>
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.TicketId)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Subject)
-                    </td>
-                    <td>
-                        @{
-                            var description = item.IssueDescription;
-                            if (description != null && description.Length > 20)
-                            {
-                                description = description.Substring(0, 20) + "...";
-                            }
-                        }
-                        @description
-                    </td>
+                    <th>
+
+                        <a asp-action="ViewAll" asp-route-sortBy="@sortById" asp-route-filterBy="@filterBy" asp-route-filterValue="@filterValue" class="text-black">
+                            @Html.DisplayNameFor(model => model.TicketId)
+                            @(string.IsNullOrEmpty(sortBy) ? Html.Raw("<i class='fa-solid fa-sort-up'></i>") : (sortBy == "id_desc" ? Html.Raw("<i class='fa-solid fa-sort-down'></i>") : Html.Raw("<i class='fa-solid fa-sort'></i>")))
+                        </a>
+                    </th>
+                    <th>
+                        <a asp-action="ViewAll" asp-route-sortBy="@sortBySubject" asp-route-filterBy="@filterBy" asp-route-filterValue="@filterValue" class="text-black">
+                            @Html.DisplayNameFor(model => model.Subject)
+                            @(sortBy == "subject" ? Html.Raw("<i class='fa-solid fa-sort-up'></i>") : (sortBy == "subject_desc" ? Html.Raw("<i class='fa-solid fa-sort-down'></i>") : Html.Raw("<i class='fa-solid fa-sort'></i>")))
+                        </a>
+                    </th>
+                    @* <th>
+                    @Html.DisplayNameFor(model => model.IssueDescription)
+                    </th> *@
                     @if (!User.IsInRole("Employee"))
                     {
-                        <td>
-                            @Html.DisplayFor(modelItem => item.User.Name)
-                        </td>
+                        <th>
+                            <a asp-action="ViewAll" asp-route-sortBy="@sortByUser" asp-route-filterBy="@filterBy" asp-route-filterValue="@filterValue" class="text-black">
+                                @Html.DisplayNameFor(model => model.User)
+                                @(sortBy == "user" ? Html.Raw("<i class='fa-solid fa-sort-up'></i>") : (sortBy == "user_desc" ? Html.Raw("<i class='fa-solid fa-sort-down'></i>") : Html.Raw("<i class='fa-solid fa-sort'></i>")))
+                            </a>
+                        </th>
                     }
-                    <td>
-                        @Html.DisplayFor(modelItem => item.CreatedDate)
-                    </td>
-                    <td>
-                        @if (item.UpdatedDate == null)
-                        {
-                            @:No Updates
-                        }
-                        else
-                        {
-                            @Html.DisplayFor(modelItem => item.UpdatedDate)
-                        }
-                    </td>
-                    <td>
-                        @if (item.ResolvedDate == null)
-                        {
-                            @:Open
-                        }
-                        else
-                        {
-                            @Html.DisplayFor(modelItem => item.ResolvedDate)
-                        }
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.CategoryType.CategoryName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PriorityType.PriorityName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.StatusType.StatusName)
-                    </td>
-                    <td>
-                        @if (item.Attachment != null)
-                        {
-                            <a href="@Url.Action("DownloadAttachment", "Ticket", new { id = item.TicketId })">Download Attachment</a>
-                        }
-                        else
-                        {
-                            @:No attachment
-                        }
-                    </td>
-                    <td>
-                        @Html.ActionLink("Details", "ViewTicket", new { id = item.TicketId })
-                        @if (User.IsInRole("Employee"))
-                        {
-                            @if (item.StatusType.StatusName.Contains("Resolved"))
+                    @* <th>
+                    <a asp-action="ViewAll" asp-route-sortBy="@sortByCreatedDate" asp-route-filterBy="@filterBy" asp-route-filterValue="@filterValue" class="text-black">
+                    @Html.DisplayNameFor(model => model.CreatedDate)
+                    @(sortBy == "created" ? Html.Raw("<i class='fa-solid fa-sort-up'></i>") : (sortBy == "created_desc" ? Html.Raw("<i class='fa-solid fa-sort-down'></i>") : Html.Raw("<i class='fa-solid fa-sort'></i>")))
+                    </a>
+                    </th> *@
+                    <th>
+                        <a asp-action="ViewAll" asp-route-sortBy="@sortByUpdatedDate" asp-route-filterBy="@filterBy" asp-route-filterValue="@filterValue" class="text-black">
+                            @Html.DisplayNameFor(model => model.UpdatedDate)
+                            @(sortBy == "updated" ? Html.Raw("<i class='fa-solid fa-sort-up'></i>") : (sortBy == "updated_desc" ? Html.Raw("<i class='fa-solid fa-sort-down'></i>") : Html.Raw("<i class='fa-solid fa-sort'></i>")))
+                        </a>
+                    </th>
+                    <th>
+                        <a asp-action="ViewAll" asp-route-sortBy="@sortByResolvedDate" asp-route-filterBy="@filterBy" asp-route-filterValue="@filterValue" class="text-black">
+                            @Html.DisplayNameFor(model => model.ResolvedDate)
+                            @(sortBy == "resolved" ? Html.Raw("<i class='fa-solid fa-sort-up'></i>") : (sortBy == "resolved_desc" ? Html.Raw("<i class='fa-solid fa-sort-down'></i>") : Html.Raw("<i class='fa-solid fa-sort'></i>")))
+                        </a>
+                    </th>
+                    <th>
+                        <a asp-action="ViewAll" asp-route-sortBy="@sortByCategory" asp-route-filterBy="@filterBy" asp-route-filterValue="@filterValue" class="text-black">
+                            @Html.DisplayNameFor(model => model.CategoryType)
+                            @(sortBy == "category" ? Html.Raw("<i class='fa-solid fa-sort-up'></i>") : (sortBy == "category_desc" ? Html.Raw("<i class='fa-solid fa-sort-down'></i>") : Html.Raw("<i class='fa-solid fa-sort'></i>")))
+                        </a>
+                    </th>
+                    <th>
+                        <a asp-action="ViewAll" asp-route-sortBy="@sortByPriority" asp-route-filterBy="@filterBy" asp-route-filterValue="@filterValue" class="text-black">
+                            @Html.DisplayNameFor(model => model.PriorityType)
+                            @(sortBy == "priority" ? Html.Raw("<i class='fa-solid fa-sort-up'></i>") : (sortBy == "priority_desc" ? Html.Raw("<i class='fa-solid fa-sort-down'></i>") : Html.Raw("<i class='fa-solid fa-sort'></i>")))
+                        </a>
+                    </th>
+                    <th>
+                        <a asp-action="ViewAll" asp-route-sortBy="@sortByStatus" asp-route-filterBy="@filterBy" asp-route-filterValue="@filterValue" class="text-black">
+                            @Html.DisplayNameFor(model => model.StatusType)
+                            @(sortBy == "status" ? Html.Raw("<i class='fa-solid fa-sort-up'></i>") : (sortBy == "status_desc" ? Html.Raw("<i class='fa-solid fa-sort-down'></i>") : Html.Raw("<i class='fa-solid fa-sort'></i>")))
+                        </a>
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Attachment)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="13" class="alert alert-warning text-center" role="alert">
+                            @(string.IsNullOrEmpty(filterBy) ? Html.Raw("No tickets found") : Html.Raw("No tickets found matching the criteria"))
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.TicketId)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Subject)
+                            </td>
+                            @* <td>
+                    @{
+                    var description = item.IssueDescription;
+                    if (description != null && description.Length > 20)
+                    {
+                    description = description.Substring(0, 20) + "...";
+                    }
+                    }
+                    @description
+                    </td> *@
+                            @if (!User.IsInRole("Employee"))
                             {
-                                <text> | </text>
-                                @if (item.Feedback == null)
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.User.Name)
+                                </td>
+                            }
+                            @* <td>
+                    @Html.DisplayFor(modelItem => item.CreatedDate)
+                    </td> *@
+                            <td>
+                                @if (item.UpdatedDate == null)
                                 {
-                                    @Html.ActionLink("Provide Feedback", "ViewTicket", new { id = item.TicketId, showModal = "provideFeedback" })
+                                    @:No Updates
                                 }
                                 else
                                 {
-                                    @Html.ActionLink("View Feedback", "ViewTicket", new { id = item.TicketId })
+                                    @Html.DisplayFor(modelItem => item.UpdatedDate)
                                 }
-                            }
-                            else
-                            {
-                                <text> | </text>
-                                @Html.ActionLink("Edit", "Edit", new { id = item.TicketId })
-                            }
-                            <text> | </text>
-                            <a href="javascript:void(0);" onclick="displayDeleteModal('@item.TicketId', '@item.Subject')">Delete</a>
-                        }
-                    </td>
-                </tr>
-            }
-        }
-    </tbody>
-</table>
+                            </td>
+                            <td>
+                                @if (item.ResolvedDate == null)
+                                {
+                                    @:Open
+                                }
+                                else
+                                {
+                                    @Html.DisplayFor(modelItem => item.ResolvedDate)
+                                }
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CategoryType.CategoryName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PriorityType.PriorityName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StatusType.StatusName)
+                            </td>
+                            <td>
+                                @if (item.Attachment != null)
+                                {
+                                    <a href="@Url.Action("DownloadAttachment", "Ticket", new { id = item.TicketId })">Download Attachment</a>
+                                }
+                                else
+                                {
+                                    @:No attachment
+                                }
+                            </td>
+                            <td>
+                                @Html.ActionLink("Details", "ViewTicket", new { id = item.TicketId })
+                                @if (User.IsInRole("Employee"))
+                                {
+                                    @if (item.StatusType.StatusName.Contains("Resolved"))
+                                    {
+                                        <text> | </text>
+                                        @if (item.Feedback == null)
+                                        {
+                                            @Html.ActionLink("Provide Feedback", "ViewTicket", new { id = item.TicketId, showModal = "provideFeedback" })
+                                        }
+                                        else
+                                        {
+                                            @Html.ActionLink("View Feedback", "ViewTicket", new { id = item.TicketId })
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <text> | </text>
+                                        @Html.ActionLink("Edit", "Edit", new { id = item.TicketId })
+                                    }
+                                    <text> | </text>
+                                    <a href="javascript:void(0);" onclick="displayDeleteModal('@item.TicketId', '@item.Subject')">Delete</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
 
 @*---- Values passed to the js files ----*@
 <input type="hidden" id="createMessage" value="@TempData["CreateMessage"]" />

@@ -8,7 +8,7 @@
 }
 
 body {
-    background: linear-gradient(-90deg, #FC9F32 0%, rgba(206, 81, 38, 87%) 25%, rgba(174, 27, 30, 73%) 50%, rgba(93, 34, 70, 93%) 73%, #1A2766 100%) !important;
+    background: linear-gradient(-90deg, #FC9F32 0%, rgba(206, 81, 38, 87%) 25%, rgba(174, 27, 30, 73%) 50%, rgba(93, 34, 70, 93%) 73%, #1A2766 100%);
 }
 
 .btn-primary {

@@ -1,4 +1,8 @@
-﻿.layout {
+﻿body {
+    background-color: var(--background-color5) !important;
+}
+
+.layout {
     display: flex;
     min-height: 100vh;
 }
@@ -47,9 +51,5 @@
 }
 
 .modal-footer {
-    background-color: var(--background-color5) !important;
-}
-
-.bg-gray {
     background-color: var(--background-color5) !important;
 }

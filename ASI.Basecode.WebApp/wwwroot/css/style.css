@@ -391,6 +391,7 @@ header {
     padding-bottom: 0;
     margin-bottom: 0;
     border-bottom: 1px solid var(--border-color);
+    background-color: white;
 }
 
 .form-control:hover, .form-control:active, .form-control:focus {
@@ -408,6 +409,11 @@ header {
         border-color: var(--secondary-color);
     }
 
+    .btn-primary:active, .btn-primary:focus {
+        box-shadow: none !important;
+        background-color: var(--secondary-color) !important;
+    }
+
 .btn-secondary {
     background-color: var(--background-color2);
     color: black;
@@ -419,6 +425,12 @@ header {
         color: black;
     }
 
+    .btn-secondary:active, .btn-secondary:focus {
+        box-shadow: none !important;
+        background-color: var(--background-color6) !important;
+        color: black !important;
+    }
+
 .btn-danger {
     background-color: var(--danger-color);
     color: white;
@@ -428,6 +440,36 @@ header {
     .btn-danger:hover {
         background-color: #C23235;
         color: white;
+    }
+
+    .btn-danger:active, .btn-danger:focus {
+        box-shadow: none !important;
+        background-color: #C23235 !important;
+    }
+
+.btn-white {
+    color: var(--primary-color) !important;
+    background-color: white;
+    border-color: var(--primary-color);
+    width: 60%;
+    font-weight: bold;
+}
+
+    .btn-white:hover {
+        background-color: rgba(5,37,66,0.5);
+        border-color: white;
+        color: white !important;
+        width: 60%;
+        font-weight: bold;
+    }
+
+    .btn-white:active, .btn-white:focus {
+        background-color: rgba(5,37,66,0.5);
+        border-color: white;
+        color: white !important;
+        box-shadow: none !important;
+        width: 60%;
+        font-weight: bold;
     }
 
 .btn-radius {
@@ -461,6 +503,7 @@ a.text-gray {
 
 .table-white {
     border: 1px solid var(--border-color);
+    background-color: white;
 }
 
 .action-icon {
@@ -470,8 +513,71 @@ a.text-gray {
 }
 
     .action-icon:hover {
-        background-color: var(--background-color6); 
+        background-color: var(--background-color6);
         color: black;
         border-radius: 4px;
         text-decoration: none;
     }
+
+/*Ticket Priority Color*/
+.priority-critical {
+    background-color: #F44336; /* Red */
+    color: white;
+}
+
+.priority-high {
+    background-color: #ff9800; /* Orange */
+    color: white;
+}
+
+.priority-medium {
+    background-color: #FC9F32; /* Yellow */
+    color: white;
+}
+
+.priority-low {
+    background-color: #0A541F; /* Green */
+    color: white;
+}
+
+/*Ticket Status Color*/
+.status-open {
+    background-color: #0A541F; /* Green */
+    color: white;
+}
+
+.status-closed {
+    background-color: #052542; /* Blue */
+    color: white;
+}
+
+.status-in-progress {
+    background-color: #FC9F32; /* Yellow */
+    color: white;
+}
+
+/*Ticket Category Color*/
+.category-software {
+    background-color: #1E88E5; /* Light Blue */
+    color: white;
+}
+
+.category-hardware {
+    background-color: #8E24AA; /* Purple */
+    color: white;
+}
+
+.category-network {
+    background-color: #3949AB; /* Indigo */
+    color: white;
+}
+
+.category-account {
+    background-color: #F4511E; /* Dark Orange */
+    color: white;
+}
+
+.category-other {
+    background-color: #6D4C41; /* Brown */
+    color: white;
+}
