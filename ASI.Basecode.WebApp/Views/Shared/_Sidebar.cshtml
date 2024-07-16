@@ -1,154 +1,4 @@
-﻿@* @using Microsoft.AspNetCore.Http
-@inject IHttpContextAccessor HttpContextAccessor
-@inject ASI.Basecode.Services.Interfaces.INotificationService NotificationService
-
-@{
-    bool isAdmin = HttpContextAccessor.HttpContext.User.IsInRole("Admin");
-    var userId = HttpContextAccessor.HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-    bool hasUnreadNotifications = false;
-
-    if (!string.IsNullOrEmpty(userId))
-    {
-        hasUnreadNotifications = NotificationService.HasUnreadNotifications(userId);
-    }
-}
-
-<!DOCTYPE html>
-<html>
-<body>
-    <div class="@((ViewBag.LoginView == true) ? "hide-navbar" : "") sidebar">
-        <div class="logosec hover-pointer">
-            <img src="~/img/ticketita-logo.svg"
-                 style="width: 185px;" alt="logo"
-                 onclick="window.location.href = '@Url.Action("Index", "Home")';">
-        </div>
-        <div class="sidebar-header mt-5 mb-2">Navigation</div>
-        <ul class="list-unstyled">
-            @if (isAdmin)
-            {
-                <li class="py-2">
-                    <a asp-action="Index" asp-controller="User" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "User" ? "active" : "")">
-                        <i class="fa fa-users px-1"></i>
-                        Users
-                    </a>
-                </li>
-            }
-            <li class="py-2">
-                <a asp-action="Index" asp-controller="Home" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Home" ? "active" : "")">
-                    <i class="fa fa-area-chart px-1"></i>
-                    Dashboard
-                </a>
-            </li>
-            <li class="py-2">
-                <a asp-action="Index" asp-controller="User" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "User" ? "active" : "")">
-                    <i class="fa fa-users px-1"></i>
-                    Users
-                </a>
-            </li>
-        }
-
-        <li class="py-2">
-            <a asp-action="ViewAll" asp-controller="Ticket" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Ticket" ? "active" : "")">
-                <i class="fa fa-ticket px-1"></i>
-                Ticket Screen
-            </a>
-        </li>
-        <li class="py-2">
-            <a asp-action="ViewAll" asp-controller="Feedback" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Feedback" ? "active" : "")">
-                <i class="fa fa-ticket px-1"></i>
-                Feedbacks
-            </a>
-        </li>
-           <li class="py-2">
-                <a asp-action="Index" asp-controller="Notification" class="@(hasUnreadNotifications ? "unread-notification" : "") @(ViewContext.RouteData.Values["Controller"].ToString() == "Notification" ? "active" : "")">
-                    <i class="fa fa-bell px-1"></i>
-                    Notifications
-                </a>
-            </li>
-        <li class="py-2">
-            <a asp-controller="KnowledgeBase" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "KnowledgeBase" ? "active" : "")">
-                <i class="fa fa-book px-1"></i>
-                Articles
-            </a>
-        </li>
-        <li class="py-2">
-            <a asp-controller="#" asp-action="#" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "#" ? "active" : "")">
-                <i class="fa fa-cog px-1"></i>
-                Settings
-            </a>
-        <li class="py-2">
-            <a href="#" data-toggle="modal" data-target="#logoutModal">
-                <i class="fa fa-sign-out px-1"></i>
-                Log out
-            </a>
-        </li>
-    </ul>
-</div>
-
-<!-- Logout Modal -->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header border-0">
-                <h5 class="modal-title" id="logoutModalLabel">
-                    <i class="fa fa-hourglass-half px-1"></i>
-                    Log out
-                </a>
-            </li>
-        </ul>
-    </div>
-
-    <!-- Logout Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title" id="exampleModalLabel">
-                        <i class="fa fa-hourglass-half px-1"></i>
-                        Log out
-                    </h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body pl-4 py-1">
-                    <p>Are you sure you want to log out?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <form asp-action="SignOutUser" asp-controller="Account" method="post">
-                        <button type="submit" class="btn btn-primary">Confirm</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var links = document.querySelectorAll('.sidebar li a');
-            links.forEach(function (link) {
-                link.addEventListener('click', function () {
-                    links.forEach(function (link) {
-                        link.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                });
-            });
-        });
-    </script>
-
-    <style>
-        .unread-notification {
-            background-color: #ffeb3b; /* Highlight color */
-        }
-    </style>
-</body>
-</html> *@
-
-
-
-@using Microsoft.AspNetCore.Http
+﻿@using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
 
 @inject ASI.Basecode.Services.Interfaces.INotificationService NotificationService
@@ -157,14 +7,14 @@
     bool isAdmin = HttpContextAccessor.HttpContext.User.IsInRole("Admin");
     var userId = HttpContextAccessor.HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
     bool hasUnreadNotifications = false;
-
+    
     if (!string.IsNullOrEmpty(userId))
     {
         hasUnreadNotifications = NotificationService.HasUnreadNotifications(userId);
     }
 }
 
-<div class="@((ViewBag.LoginView == true) ? "hide-navbar" : "") sidebar">
+<div class="@((ViewBag.LoginView == true || ViewBag.create == true) ? "hide-navbar" : "") sidebar">
     <div class="logosec hover-pointer">
         <img src="~/img/ticketita-logo.svg"
              style="width: 185px;" alt="logo"

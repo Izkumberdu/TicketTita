@@ -111,7 +111,7 @@ namespace ASI.Basecode.WebApp.Controllers
             {
                 Roles = _userService.GetRoles().ToList()
             };
-            return View(model);
+            return PartialView("Create", model);
         }
 
         /// <summary>
@@ -121,11 +121,16 @@ namespace ASI.Basecode.WebApp.Controllers
         /// <returns></returns>
         [HttpGet]
         [Authorize(Policy = "Admin")]
-        public IActionResult Update(String SelectedUserId)
+        public IActionResult Update(string SelectedUserId)
         {
-            var SelectedUser = _userService.RetrieveAll().Where(s => s.UserId == SelectedUserId).FirstOrDefault();
+            var SelectedUser = _userService.RetrieveAll().FirstOrDefault(s => s.UserId == SelectedUserId);
+            if (SelectedUser == null)
+            {
+                return NotFound(); // Handle case where user is not found
+            }
+
             SelectedUser.Roles = _userService.GetRoles().ToList();
-            return View(SelectedUser);
+            return PartialView("Update", SelectedUser);
         }
 
         /// <summary>
@@ -174,9 +179,10 @@ namespace ASI.Basecode.WebApp.Controllers
         public IActionResult PostCreate(UserViewModel model)
         {
             bool Exists = _userService.RetrieveAll().Any(s => s.Name == model.Name || s.Email == model.Email);
-            if (Exists) {
-                TempData["DuplicateErr"] = "Duplicate Data";
-                return RedirectToAction("Create", model);
+            if (Exists)
+            {
+                TempData["DuplicateErr"] = "A user with the same name or email already exists.";
+                return RedirectToAction("Index");
             }
 
             _userService.Add(model);
@@ -193,16 +199,16 @@ namespace ASI.Basecode.WebApp.Controllers
         [Authorize]
         public IActionResult PostUpdate(UserViewModel model)
         {
-            // Check if another user exists with the same name or email, excluding the current user
             bool Exists = _userService.RetrieveAll().Any(s => (s.Name == model.Name || s.Email == model.Email) && s.UserId != model.UserId);
             if (Exists)
             {
                 TempData["DuplicateErr"] = "A user with the same name or email already exists.";
-                return RedirectToAction("Update", new { SelectedUserId = model.UserId });
+                return RedirectToAction("Index");
             }
             else
             {
                 _userService.Update(model);
+                TempData["UpdateMessage"] = "User Updated Succesfully";
             }
 
             return RedirectToAction("Index");

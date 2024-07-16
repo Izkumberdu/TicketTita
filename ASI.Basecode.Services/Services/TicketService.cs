@@ -517,14 +517,21 @@ namespace ASI.Basecode.Services.Services
         /// <returns>IEnumerable Ticket Assignment</returns>
         public async Task<IEnumerable<TicketAssignment>> GetTicketAssignmentsAsync() => await _repository.GetTicketAssignmentsAsync();
 
-
+        /// <summary>
+        /// Gets the unresolved tickets older than.
+        /// </summary>
+        /// <param name="timeSpan">The time span.</param>
+        /// <returns></returns>
         public IEnumerable<TicketViewModel> GetUnresolvedTicketsOlderThan(TimeSpan timeSpan)
         {
             var cutoffTime = DateTime.Now.Subtract(timeSpan);
+
             var unresolvedTickets = _repository.GetAllAsync().Result
                 .Where(t => (t.ResolvedDate == null) && t.CreatedDate <= cutoffTime && (t.User.UserId != null))
                 .ToList();
-
+            if (unresolvedTickets.Count == 0) {
+            Console.WriteLine("============================ No unresolved tickets older than ============================ " + timeSpan);
+            }
             return unresolvedTickets.Select(ticket => _mapper.Map<TicketViewModel>(ticket));
         }
 

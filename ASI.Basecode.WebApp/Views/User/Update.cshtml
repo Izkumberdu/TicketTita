@@ -4,13 +4,15 @@
     ViewData["Title"] = "Update";
 }
 
-<h1>Update</h1>
-
-<h4>UserViewModel</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="PostUpdate">
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="editUserModelLabel">Update User</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form id="updateUserForm" asp-action="PostUpdate">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input asp-for="UserId" type="hidden" />
             <input asp-for="CreatedBy" type="hidden" />
@@ -36,9 +38,10 @@
                 <label asp-for="RoleId" class="control-label"></label>
                 <select asp-for="RoleId" class="form-control">
                     <option value="">Select Role</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Employee">Employee</option>
-                    <option value="Support Agent">Support Agent</option>
+                    @foreach (var role in Model.Roles)
+                    {
+                        <option value="@role.RoleId">@role.RoleName</option>
+                    }
                 </select>
                 <span asp-validation-for="RoleId" class="text-danger"></span>
             </div>
@@ -49,17 +52,33 @@
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
     <script>
-        var errMessage = '@TempData["DuplicateErr"]'
-        if (errMessage) {
-            toastr.error(errMessage);
-        }
+        $(document).ready(function () {
+            $('#updateUserForm').submit(function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: '@Url.Action("PostUpdate")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (result) {
+                        if (result.success) {
+                            toastr.success(result.message);
+                            location.reload();
+                        } else {
+                            toastr.error(result.message);
+                        }
+                    },
+                    error: function () {
+                        toastr.error('An error occurred while updating the user.');
+                    }
+                });
+            });
+        });
     </script>
 }

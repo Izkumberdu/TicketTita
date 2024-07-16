@@ -20,11 +20,13 @@ namespace ASI.Basecode.Services.ServiceModels
         /// Gets or sets the email.
         /// </summary>
         [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Invalid Email Address.")]
         public string Email { get; set; }
         /// <summary>
         /// Gets or sets the password.
         /// </summary>
         [Required(ErrorMessage = "Password is required.")]
+        [StringLength(8, ErrorMessage = "Password length must be between 5 and 8.", MinimumLength = 5)]
         public string Password { get; set; }
         /// <summary>
         /// Gets or sets the role identifier.

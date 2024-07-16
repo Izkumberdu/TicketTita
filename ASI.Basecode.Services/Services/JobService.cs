@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ASI.Basecode.Services.Services
 {
-    public class JobService: IJob
+    public class JobService: Quartz.IJob
     {
         private readonly INotificationService _notificationService;
         private readonly ITicketService _ticketService;
@@ -27,7 +27,7 @@ namespace ASI.Basecode.Services.Services
         {
             _logger.LogInformation("Executing ReminderJob...");
 
-            var unresolvedTickets = _ticketService.GetUnresolvedTicketsOlderThan(TimeSpan.FromMinutes(30));
+            var unresolvedTickets = _ticketService.GetUnresolvedTicketsOlderThan(TimeSpan.FromMinutes(10));
 
             foreach (var ticket in unresolvedTickets)
             {
@@ -35,7 +35,7 @@ namespace ASI.Basecode.Services.Services
                     ticketId: ticket.TicketId,
                     description: "This ticket has been unresolved for over 30 minutes.",
                     notificationTypeId: "7",
-                    UserId: ticket.User.UserId,
+                    UserId: ticket.Agent.UserId,
                     title: $"Reminder: Ticket #{ticket.TicketId} Unresolved"
                 );
             }

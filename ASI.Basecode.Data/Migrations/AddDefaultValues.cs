@@ -132,7 +132,9 @@ namespace ASI.Basecode.Data.Migrations
                     { "3", "Ticket Status Update", "Sends Notification upon Ticket Status Update" },
                     { "4", "Ticket Attachment Update", "Sends Notification upon Ticket Attachment Update" },
                     { "5", "Ticket Assignment", "Sends Notification to user and support agent upon Ticket assignment" },
-                    { "6", "Ticket Reassignment", "Sends Notification upon Ticket Reassignment" }
+                    { "6", "Ticket Reassignment", "Sends Notification upon Ticket Reassignment" },
+                    { "7", "Ticket Reminder", "Sends Notification To Support Agents To Remind On Unresolved Tickets" },
+                    { "8", "Ticket Description Updated", "Sends Notification To Users and Support Agents on Changes on the Ticket Description" },
                 }
             );
         }

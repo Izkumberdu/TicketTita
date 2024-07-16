@@ -98,6 +98,7 @@ namespace ASI.Basecode.WebApp
             services.AddControllersWithViews();
             services.AddRazorPages().AddRazorRuntimeCompilation();
 
+            // Instantiates the Quartz.NET scheduler
             services.AddQuartz(q =>
             {
                 q.UseMicrosoftDependencyInjectionJobFactory();
@@ -107,7 +108,7 @@ namespace ASI.Basecode.WebApp
                 q.AddTrigger(opts => opts
                     .ForJob(jobKey)
                     .WithIdentity("ReminderJob-trigger")
-                    .WithCronSchedule("0 */30 * * * ?")); // Every 30 minutes
+                    .WithCronSchedule("0 10 * * * ?")); // Every 10 minutes
             });
             services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
