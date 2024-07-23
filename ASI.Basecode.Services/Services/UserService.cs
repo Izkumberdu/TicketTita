@@ -319,7 +319,7 @@ namespace ASI.Basecode.Services.Services
                             AverageResolutionTime = performanceReport.AverageResolutionTime,
                             AssignedDate = performanceReport.AssignedDate,
                             Name = user.Name,
-                            AverageRating = CalculateAverageRating(tickets),
+                            AverageRating = CalculateAverageRating(feedbacks),
                             Feedbacks = feedbacks
                         };
                     }
@@ -328,18 +328,18 @@ namespace ASI.Basecode.Services.Services
             return null;
         } // TODO: Implement this method
 
-        private double CalculateAverageRating(List<Ticket> tickets)
+        private double CalculateAverageRating(List<Feedback> feedbacks)
         {
-            if (tickets == null || tickets.Count == 0)
+            if (feedbacks == null || feedbacks.Count == 0)
                 return 0;
 
             int totalRatings = 0;
-            foreach (var ticket in tickets)
+            foreach (var feedback in feedbacks)
             {
-                totalRatings += ticket.Feedback?.FeedbackRating ?? 0;
+                totalRatings += feedback.FeedbackRating;
             }
 
-            return (double)totalRatings / tickets.Count;
+            return (double)totalRatings / feedbacks.Count;
         }
 
         public bool IsSupportAgent(string userId)

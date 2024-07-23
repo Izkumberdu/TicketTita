@@ -42,7 +42,7 @@ namespace ASI.Basecode.Data
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Addr=localhost;database=AsiBasecodeDb;Integrated Security=False;Trusted_Connection=True;MultipleActiveResultSets=True;");
+                optionsBuilder.UseSqlServer("Addr=FRIESDEVOURER;database=AsiBasecodeDb;Integrated Security=False;Trusted_Connection=True;MultipleActiveResultSets=True;");
             }
         }
 
@@ -291,8 +291,8 @@ namespace ASI.Basecode.Data
                 entity.HasIndex(e => e.TicketId, "IX_Feedback_TicketID");
 
                 entity.HasIndex(e => e.UserId, "IX_Feedback_UserID");
-                
-                entity.HasIndex(e => e.TicketId, "UQ__Feedback__D597FD62CAA49A3A")
+
+                entity.HasIndex(e => e.TicketId, "UQ__Feedback__D597FD62D8E22950")
                     .IsUnique();
 
                 entity.Property(e => e.FeedbackId)
@@ -608,7 +608,7 @@ namespace ASI.Basecode.Data
 
                 entity.HasIndex(e => e.UserId, "IX_TeamMember_UserID");
 
-                entity.HasIndex(e => e.UserId, "UQ__TeamMemb__B9BF33065C0BF068")
+                entity.HasIndex(e => e.UserId, "UQ__TeamMemb__B9BF33064A2F4582")
                     .IsUnique();
 
                 entity.Property(e => e.TeamId)
@@ -753,8 +753,7 @@ namespace ASI.Basecode.Data
 
                 entity.HasIndex(e => e.TicketId, "IX_TicketAssignment_TicketID");
 
-                entity.HasIndex(e => e.TicketId, "UQ__TicketAs__D597FD6239A5D41B")
-
+                entity.HasIndex(e => e.TicketId, "UQ__TicketAs__D597FD629FBCFE01")
                     .IsUnique();
 
                 entity.Property(e => e.AssignmentId)

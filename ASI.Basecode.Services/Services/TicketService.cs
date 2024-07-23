@@ -126,6 +126,9 @@ namespace ASI.Basecode.Services.Services
 
                     ticket.CategoryTypeId = model.CategoryTypeId;
                     await _repository.UpdateAsync(ticket);
+                    var categories = await _repository.GetCategoryTypesAsync();
+                    var newCategory = categories.Where(x => x.CategoryTypeId == ticket.CategoryTypeId).FirstOrDefault();
+                    await LogActivityAsync(ticket, _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value, "Update", $"Category: {newCategory.CategoryName}");
                     return;
                 }
 
@@ -152,9 +155,12 @@ namespace ASI.Basecode.Services.Services
                 }
                 if (model.File != null) await HandleAttachmentAsync(model);
 
+                if (model.Subject != ticket.Subject) await LogActivityAsync(ticket, _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value, "Update", $"Subject changed to {model.Subject}");
+                if (model.IssueDescription != ticket.IssueDescription) await LogActivityAsync(ticket, _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value, "Update", $"Issue Description: {model.IssueDescription}");
                 ticket.Subject = model.Subject != null ? model.Subject : ticket.Subject;
                 ticket.IssueDescription = model.IssueDescription != null ? model.IssueDescription : ticket.IssueDescription;
                 if(model.File != null) ticket.Attachments.Add(model.Attachment);
+                
 
                 model.UpdatedDate = DateTime.Now;
                 await UpdateTicketDate(ticket);
@@ -171,7 +177,7 @@ namespace ASI.Basecode.Services.Services
                 CreateNotification(ticket, updateType, null, model.Agent?.UserId);
                 if (ticket.IssueDescription != model.IssueDescription || ticket.Subject != model.Subject)
                 {
-                    await LogActivityAsync(ticket, _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value, "Update", $"Ticket #{ticket.TicketId} updated. Subject: {ticket.Subject}, Description: {ticket.IssueDescription}");
+                    await LogActivityAsync(ticket, _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value, "Update", $"Subject: {ticket.Subject}, Description: {ticket.IssueDescription}");
                 }
             }
             else
