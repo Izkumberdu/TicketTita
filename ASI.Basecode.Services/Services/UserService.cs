@@ -295,7 +295,7 @@ namespace ASI.Basecode.Services.Services
             return _userRepository.GetRoles();
         }
 
-        private double CalculateAverageRating(List<Ticket> tickets)
+        private double CalculateAverageRating(List<Feedback> feedbacks)
         {
             if (feedbacks == null || feedbacks.Count == 0)
                 return 0;
