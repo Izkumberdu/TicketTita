@@ -1,0 +1,19 @@
+﻿@model ASI.Basecode.Services.ServiceModels.UserPreferencesViewModel
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Preferences</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var preference in Model.Preferences)
+        {
+            <tr>
+                <td>@preference.Key</td>
+                <td>@preference.Value</td>
+            </tr>
+        }
+    </tbody>
+</table>

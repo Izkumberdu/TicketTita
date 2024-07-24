@@ -20,7 +20,7 @@
     <div class="logosec hover-pointer">
         <img src="~/img/ticketita-logo.svg"
              style="width: 185px;" alt="logo"
-             onclick="window.location.href = '@Url.Action("Index", "Home")';">
+             onclick="window.location.href = '@(User.IsInRole("Employee") ? Url.Action("GetAll", "Ticket") : Url.Action("Index", "Home"))';">
     </div>
     <div class="sidebar-header mt-5 mb-2">Navigation</div>
     <ul class="list-unstyled flex-grow-1">

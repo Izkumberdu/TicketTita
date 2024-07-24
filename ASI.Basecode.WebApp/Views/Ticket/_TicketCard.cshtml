@@ -1,0 +1,142 @@
+﻿@model ASI.Basecode.Services.ServiceModels.TicketViewModel
+@using Humanizer
+
+<div class="card mb-3 mx-auto border-0 shadow-sm card-hover" style="max-width: 1000px; border-radius: 15px;">
+    <div class="card-header bg-transparent d-flex justify-content-between align-items-center" style="border-radius: 15px 15px 0 0;">
+        <div>
+            <span class="ticket-id"><strong>TICKET ID# @Model.TicketId</strong></span>
+            <span class="border mx-1 py-0.5 px-3 btn-radius @(GetStatusCssClass(Model.StatusType.StatusName))">@Model.StatusType.StatusName</span>
+            <span class="border mx-1 py-0.5 px-3 btn-radius @(GetPriorityCssClass(Model.PriorityType.PriorityName))">@Model.PriorityType.PriorityName</span>
+            <span class="border mx-1 py-0.5 px-3 btn-radius @(GetCategoryCssClass(Model.CategoryType.CategoryName))">@Model.CategoryType.CategoryName</span>
+        </div>
+        <div>
+            @Html.ActionLink(" ", "GetTicket", new { id = Model.TicketId }, new { @class = "fas fa-info-circle action-icon", title = "Details" })
+            @if (User.IsInRole("Employee"))
+            {
+                @if (Model.StatusType.StatusName.Contains("Resolved"))
+                {
+                    <text> | </text>
+                    @if (Model.Feedback == null)
+                    {
+                        @Html.ActionLink(" ", "GetTicket", new { id = Model.TicketId, showModal = "provideFeedback" }, new { @class = "fas fa-comment-dots action-icon", title = "Provide Feedback" })
+                    }
+                    else
+                    {
+                        @Html.ActionLink(" ", "GetTicket", new { id = Model.TicketId }, new { @class = "fas fa-comment-dots action-icon", title = "View Feedback" })
+                    }
+                }
+                else
+                {
+                    <text> | </text>
+                    @Html.ActionLink(" ", "GetTicket", new { id = Model.TicketId, showModal = "editTicket" }, new { @class = "fas fa-edit action-icon", title = "Edit" })
+                }
+                <text> | </text>
+                <a href="javascript:void(0);" onclick="displayDeleteModal('@Model.TicketId', '@(Model.Subject.Length > 20 ? Model.Subject.Substring(0, 20) + "..." : Model.Subject)')">
+                    <i class="fas fa-trash action-icon" title="Delete"></i>
+                </a>
+            }
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-end">
+            @if (!User.IsInRole("Employee"))
+            {
+                <div>
+                    <small class="text-muted"><strong>@Model.User.Name</strong></small>
+                </div>
+            }
+            <div>
+                <small class="text-muted">
+                    Assignation:
+                    @if (Model.TicketAssignment?.Team == null && Model.TicketAssignment?.Agent == null)
+                    {
+                        <strong>None</strong>
+                    }
+                    @if (Model.TicketAssignment?.Team != null)
+                    {
+                        <strong>@Model.TicketAssignment.Team.Name</strong>
+                    }
+                    @if (Model.TicketAssignment?.Team != null && Model.TicketAssignment?.Agent != null)
+                    {
+                        <text> | </text>
+                    }
+                    @if (Model.TicketAssignment?.Agent != null)
+                    {
+                        <strong>@(Model.TicketAssignment.Agent.Name == User.Identity.Name ? "Me" : Model.TicketAssignment.Agent.Name)</strong>
+                    }
+                </small>
+            </div>
+        </div>
+        <h5 class="card-title my-2">@Model.Subject</h5>
+        <div class="d-flex justify-content-between align-items-end">
+            <p class="card-text mb-2">@((Model.IssueDescription.Length > 50) ? Model.IssueDescription.Substring(0, 50) + "..." : Model.IssueDescription)</p>
+            <div>
+                <p class="card-text">
+                    <small class="text-muted">
+                        Recent activity:
+                        --<i>
+                            @Model.ActivityLogs.OrderBy(x => x.ActivityDate).LastOrDefault()?.Details by
+                            @Model.ActivityLogs.OrderBy(x => x.ActivityDate).LastOrDefault()?.User?.Name
+                        </i>--
+                    </small>
+                    <small class="text-muted"><i title="@Model.UpdatedDate">@Model.UpdatedDate?.ToUniversalTime().Humanize()</i></small>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetPriorityCssClass(string PriorityName)
+    {
+        switch (PriorityName.ToLower())
+        {
+            case "critical":
+                return "priority-critical";
+            case "high":
+                return "priority-high";
+            case "medium":
+                return "priority-medium";
+            case "low":
+                return "priority-low";
+            default:
+                return "";
+        }
+    }
+
+    string GetStatusCssClass(string StatusName)
+    {
+        switch (StatusName.ToLower())
+        {
+            case "open":
+                return "status-open";
+            case "closed":
+                return "status-closed";
+            case "in progress":
+                return "status-in-progress";
+            case "resolved":
+                return "status-resolved";
+            default:
+                return "";
+        }
+    }
+
+    string GetCategoryCssClass(string CategoryName)
+    {
+        switch (CategoryName.ToLower())
+        {
+            case "software":
+                return "category-software";
+            case "hardware":
+                return "category-hardware";
+            case "network":
+                return "category-network";
+            case "account":
+                return "category-account";
+            case "other":
+                return "category-other";
+            default:
+                return "";
+        }
+    }
+}

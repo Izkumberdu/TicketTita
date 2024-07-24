@@ -1,94 +1,63 @@
 ﻿@model ASI.Basecode.Services.ServiceModels.UserPreferencesViewModel
 
-@if (User.IsInRole("Support Agent"))
-{
-    <div class="form-group">
-        <label for="Preferences_defaultShowOption">Default Show Tickets</label>
-        <select class="form-control" id="Preferences_defaultShowOption" name="Preferences[defaultShowOption]">
-            <option value="all" selected="@(Model.Preferences.GetValueOrDefault("defaultShowOption") == "all")">All</option>
-            <option value="assigned_me" selected="@(Model.Preferences.GetValueOrDefault("defaultShowOption") == "assigned_me")">Assigned to me</option>
-            <option value="assigned_team" selected="@(Model.Preferences.GetValueOrDefault("defaultShowOption") == "assigned_team")">Assigned to my team</option>
-            <option value="assigned_none" selected="@(Model.Preferences.GetValueOrDefault("defaultShowOption") == "assigned_none")">No Assignment</option>
-        </select>
-    </div>
-}
 <div class="row">
     <div class="col-md-3 form-group">
-        <label for="Preferences_defaultStatusFilter">Default Status Filter</label>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" id="status_none" name="Preferences[defaultStatusFilter]" value="" @(string.IsNullOrEmpty(Model.Preferences.GetValueOrDefault("defaultStatusFilter")) ? "checked" : "") />
-            <label class="form-check-label" for="status_none">All</label>
-        </div>
-        @foreach (var item in Model.StatusTypes)
+        @if (User.IsInRole("Support Agent"))
         {
-            if (!User.IsInRole("Employee") && item.StatusTypeId == "S4") continue;
-            <div class="form-check">
-                <input class="form-check-input" type="radio" id="status_@item.StatusTypeId" name="Preferences[defaultStatusFilter]" value="@item.StatusTypeId" @(Model.Preferences.GetValueOrDefault("defaultStatusFilter") == item.StatusTypeId ? "checked" : "") />
-                <label class="form-check-label" for="status_@item.StatusTypeId">@item.StatusName</label>
+            <div class="form-group mt-2">
+                <label for="Preferences_defaultShowOption">Show Tickets</label>
+                <select class="form-control" id="Preferences_defaultShowOption" name="Preferences[defaultShowOption]">
+                    <option value="all" selected="@(Model.Preferences.GetValueOrDefault("defaultShowOption") == "all")">All</option>
+                    <option value="assigned_me" selected="@(Model.Preferences.GetValueOrDefault("defaultShowOption") == "assigned_me")">Assigned to me</option>
+                    <option value="assigned_team" selected="@(Model.Preferences.GetValueOrDefault("defaultShowOption") == "assigned_team")">Assigned to my team</option>
+                    <option value="assigned_none" selected="@(Model.Preferences.GetValueOrDefault("defaultShowOption") == "assigned_none")">No Assignment</option>
+                </select>
             </div>
         }
+        <div class="form-group mt-2">
+            <label for="Preferences_defaultStatusFilter">Status Filter</label>
+            <select class="form-control" id="Preferences_defaultStatusFilter" name="Preferences[defaultStatusFilter]">
+                <option value="" selected="@(string.IsNullOrEmpty(Model.Preferences.GetValueOrDefault("defaultStatusFilter")))">All</option>
+                @foreach (var item in Model.StatusTypes)
+                {
+                    if (!User.IsInRole("Employee") && item.StatusTypeId == "S4") continue;
+                    <option value="@item.StatusTypeId" selected="@(Model.Preferences.GetValueOrDefault("defaultStatusFilter") == item.StatusTypeId)">@item.StatusName</option>
+                }
+            </select>
+        </div>
+        <div class="form-group mt-2">
+            <label for="Preferences_defaultPriorityFilter">Priority Filter</label>
+            <select class="form-control" id="Preferences_defaultPriorityFilter" name="Preferences[defaultPriorityFilter]">
+                <option value="" selected="@(string.IsNullOrEmpty(Model.Preferences.GetValueOrDefault("defaultPriorityFilter")))">All</option>
+                @foreach (var item in Model.PriorityTypes)
+                {
+                <option value="@item.PriorityTypeId" selected="@(Model.Preferences.GetValueOrDefault("defaultPriorityFilter") == item.PriorityTypeId)">@item.PriorityName</option>
+                }
+            </select>
+        </div>
     </div>
     <div class="col-md-3 form-group">
-        <label for="Preferences_defaultPriorityFilter">Default Priority Filter</label>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" id="priority_none" name="Preferences[defaultPriorityFilter]" value="" @(string.IsNullOrEmpty(Model.Preferences.GetValueOrDefault("defaultPriorityFilter")) ? "checked" : "") />
-            <label class="form-check-label" for="priority_none">All</label>
+        <div class="form-group mt-2">
+            <label for="Preferences_defaultCategoryFilter">Category Filter</label>
+            <select class="form-control" id="Preferences_defaultCategoryFilter" name="Preferences[defaultCategoryFilter]">
+                <option value="" selected="@(string.IsNullOrEmpty(Model.Preferences.GetValueOrDefault("defaultCategoryFilter")))">All</option>
+                @foreach (var item in Model.CategoryTypes)
+                {
+                    <option value="@item.CategoryTypeId" selected="@(Model.Preferences.GetValueOrDefault("defaultCategoryFilter") == item.CategoryTypeId)">@item.CategoryName</option>
+                }
+            </select>
         </div>
-        @foreach (var item in Model.PriorityTypes)
-        {
-            <div class="form-check">
-                <input class="form-check-input" type="radio" id="priority_@item.PriorityTypeId" name="Preferences[defaultPriorityFilter]" value="@item.PriorityTypeId" @(Model.Preferences.GetValueOrDefault("defaultPriorityFilter") == item.PriorityTypeId ? "checked" : "") />
-                <label class="form-check-label" for="priority_@item.PriorityTypeId">@item.PriorityName</label>
-            </div>
-        }
-    </div>
-    <div class="col-md-3 form-group">
-        <label for="Preferences_defaultCategoryFilter">Default Category Filter</label>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" id="category_none" name="Preferences[defaultCategoryFilter]" value="" @(string.IsNullOrEmpty(Model.Preferences.GetValueOrDefault("defaultCategoryFilter")) ? "checked" : "") />
-            <label class="form-check-label" for="category_none">All</label>
-        </div>
-        @foreach (var item in Model.CategoryTypes)
-        {
-            <div class="form-check">
-                <input class="form-check-input" type="radio" id="category_@item.CategoryTypeId" name="Preferences[defaultCategoryFilter]" value="@item.CategoryTypeId" @(Model.Preferences.GetValueOrDefault("defaultCategoryFilter") == item.CategoryTypeId ? "checked" : "") />
-                <label class="form-check-label" for="category_@item.CategoryTypeId">@item.CategoryName</label>
-            </div>
-        }
-    </div>
-    <div class="col-md-3 form-group">
-        <label for="Preferences_defaultSortBy">Default Sort By</label>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" id="sort_none" name="Preferences[defaultSortBy]" value="" @(string.IsNullOrEmpty(Model.Preferences.GetValueOrDefault("defaultSortBy")) ? "checked" : "") />
-            <label class="form-check-label" for="sort_none">None</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" id="sort_updated_desc" name="Preferences[defaultSortBy]" value="updated_desc" @(Model.Preferences.GetValueOrDefault("defaultSortBy") == "updated_desc" ? "checked" : "") />
-            <label class="form-check-label" for="sort_updated_desc">Recently Updated</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" id="sort_created_desc" name="Preferences[defaultSortBy]" value="created_desc" @(Model.Preferences.GetValueOrDefault("defaultSortBy") == "created_desc" ? "checked" : "") />
-            <label class="form-check-label" for="sort_created_desc">Newest</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" id="sort_created_asc" name="Preferences[defaultSortBy]" value="created_asc" @(Model.Preferences.GetValueOrDefault("defaultSortBy") == "created_asc" ? "checked" : "") />
-            <label class="form-check-label" for="sort_created_asc">Oldest</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" id="sort_ticket_asc" name="Preferences[defaultSortBy]" value="ticket_asc" @(Model.Preferences.GetValueOrDefault("defaultSortBy") == "ticket_asc" ? "checked" : "") />
-            <label class="form-check-label" for="sort_ticket_asc">Ticket ID (A-Z)</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" id="sort_ticket_desc" name="Preferences[defaultSortBy]" value="ticket_desc" @(Model.Preferences.GetValueOrDefault("defaultSortBy") == "ticket_desc" ? "checked" : "") />
-            <label class="form-check-label" for="sort_ticket_desc">Ticket ID (Z-A)</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" id="sort_subject_asc" name="Preferences[defaultSortBy]" value="subject_asc" @(Model.Preferences.GetValueOrDefault("defaultSortBy") == "subject_asc" ? "checked" : "") />
-            <label class="form-check-label" for="sort_subject_asc">Subject (A-Z)</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" id="sort_subject_desc" name="Preferences[defaultSortBy]" value="subject_desc" @(Model.Preferences.GetValueOrDefault("defaultSortBy") == "subject_desc" ? "checked" : "") />
-            <label class="form-check-label" for="sort_subject_desc">Subject (Z-A)</label>
+        <div class="form-group mt-2">
+            <label for="Preferences_defaultSortBy">Sort By</label>
+            <select class="form-control" id="Preferences_defaultSortBy" name="Preferences[defaultSortBy]">
+                <option value="updated_desc" selected="@(string.IsNullOrEmpty(Model.Preferences.GetValueOrDefault("defaultSortBy")) || Model.Preferences.GetValueOrDefault("defaultSortBy") == "updated_desc")">Recently Updated</option>
+                <option value="created_desc" selected="@(Model.Preferences.GetValueOrDefault("defaultSortBy") == "created_desc")">Newest</option>
+                <option value="created_asc" selected="@(Model.Preferences.GetValueOrDefault("defaultSortBy") == "created_asc")">Oldest</option>
+                <option value="ticket_asc" selected="@(Model.Preferences.GetValueOrDefault("defaultSortBy") == "ticket_asc")">Ticket ID (A-Z)</option>
+                <option value="ticket_desc" selected="@(Model.Preferences.GetValueOrDefault("defaultSortBy") == "ticket_desc")">Ticket ID (Z-A)</option>
+                <option value="subject_asc" selected="@(Model.Preferences.GetValueOrDefault("defaultSortBy") == "subject_asc")">Subject (A-Z)</option>
+                <option value="subject_desc" selected="@(Model.Preferences.GetValueOrDefault("defaultSortBy") == "subject_desc")">Subject (Z-A)</option>
+            </select>
         </div>
     </div>
 </div>

@@ -30,6 +30,7 @@ namespace ASI.Basecode.Data.Models
         public virtual Admin CreatedByNavigation { get; set; }
         public virtual Role Role { get; set; }
         public virtual Admin UpdatedByNavigation { get; set; }
+        public virtual PerformanceReport PerformanceReport { get; set; }
         public virtual TeamMember TeamMember { get; set; }
         public virtual ICollection<ActivityLog> ActivityLogs { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }

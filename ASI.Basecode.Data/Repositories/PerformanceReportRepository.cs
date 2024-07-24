@@ -29,5 +29,8 @@ namespace ASI.Basecode.Data.Repositories
             this.GetDbSet<PerformanceReport>().Update(performanceReport);
             await UnitOfWork.SaveChangesAsync();
         }
+
+        public async Task<PerformanceReport> GetPerformanceReportByAgentIdAsync(string agentId)
+            => await this.GetDbSet<PerformanceReport>().Where(r => r.UserId == agentId).FirstOrDefaultAsync();            
     }
 }

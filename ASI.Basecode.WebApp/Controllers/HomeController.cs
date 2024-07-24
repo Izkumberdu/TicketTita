@@ -1,6 +1,7 @@
 ﻿using ASI.Basecode.Services.Interfaces;
 using ASI.Basecode.WebApp.Mvc;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +12,7 @@ namespace ASI.Basecode.WebApp.Controllers
     /// <summary>
     /// Home Controller
     /// </summary>
+    [Authorize(Policy = "AdminOrAgent")]
     public class HomeController : ControllerBase<HomeController>
     {
         /// <summary>

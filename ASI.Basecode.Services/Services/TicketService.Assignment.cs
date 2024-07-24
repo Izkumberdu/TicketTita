@@ -59,17 +59,17 @@ namespace ASI.Basecode.Services.Services
                 if (teamId == noTeam && agentId != noAgent)
                 {
                     assignment = await CreateTicketAssignmentAsync(ticketId, agentId);
-                    activityLogDetail = $"Assigned ticket to Agent: {agent}";
+                    activityLogDetail = $"Ticket assigned to agent";
                 }
                 else if (teamId != noTeam && agentId == noAgent)
                 {
                     assignment = await CreateTicketAssignmentAsync(ticketId, teamId: teamId);
-                    activityLogDetail = $"Assigned ticket to Team: {team}";
+                    activityLogDetail = $"Ticket assigned to team";
                 }
                 else if (teamId != noTeam && agentId != noAgent)
                 {
                     assignment = await CreateTicketAssignmentAsync(ticketId, agentId, teamId);
-                    activityLogDetail = $"Assigned ticket to Team: {team} and Agent: {agent}";
+                    activityLogDetail = $"Ticket assigned to team and agent";
                 }
                 else
                 {
@@ -103,41 +103,41 @@ namespace ASI.Basecode.Services.Services
                 {
                     status = "unassign";
                     assignment.AgentId = null;
-                    activityLogDetail = $"Unassigned Agent: {assignmentAgent}";
+                    activityLogDetail = $"Agent unassigned from ticket";
                 }
                 else if (teamId == noTeam && agentId != assignmentAgentId)
                 {
                     status = "reassign";
                     assignment.TeamId = null;
                     assignment.AgentId = agentId;
-                    activityLogDetail = $"Reassign Agent to {agent}";
+                    activityLogDetail = $"New agent assigned to ticket";
                 }
                 else if (teamId == assignmentTeamId && agentId != assignmentAgentId)
                 {
                     status = "reassign";
                     assignment.AgentId = agentId;
-                    activityLogDetail = $"Reassign Agent to {agent}";
+                    activityLogDetail = $"New agent assigned to ticket";
                 }
                 else if (teamId != assignmentTeamId && agentId == noAgent)
                 {
                     status = "reassign";
                     assignment.TeamId = teamId;
                     assignment.AgentId = null;
-                    activityLogDetail = $"Reassign Team to {team}";
+                    activityLogDetail = $"New team assigned to ticket";
                 }
                 else if (teamId != assignmentTeamId && agentId != assignmentAgentId)
                 {
                     status = "reassign";
                     assignment.TeamId = teamId;
                     assignment.AgentId = agentId;
-                    activityLogDetail = $"Reassign Team to {team} and Agent to {agent}";
+                    activityLogDetail = $"New team and agent assigned to team";
                 }
                 else if(string.IsNullOrEmpty(assignmentTeamId) && 
                     !string.IsNullOrEmpty(teamId) && agentId == assignmentAgentId)
                 {
                     status = "assign";
                     assignment.TeamId = teamId;
-                    activityLogDetail = $"Assign Team to {team}";
+                    activityLogDetail = $"New team assigned to ticket";
                 }
                 else
                 {
@@ -149,7 +149,7 @@ namespace ASI.Basecode.Services.Services
             }
             await CheckAndModifyStatusByAssignment(ticketId, status);
             var ticket = await _repository.FindByIdAsync(model.TicketId);
-            await LogActivityAsync(ticket, _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value, "Assignment Changes", activityLogDetail);
+            await LogActivityAsync(ticket, currentUser, "Assignment Updated", $"{activityLogDetail}");
             return status;
         }
 

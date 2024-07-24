@@ -20,7 +20,6 @@ namespace ASI.Basecode.Services.Interfaces
         int CountFilteredUsers(IEnumerable<UserViewModel> users);
         IEnumerable<UserViewModel> PaginateUsers(IEnumerable<UserViewModel> users, int pageSize, int pageNumber);
 
-        PerformanceReportViewModel GetPerformanceReport(string userId);
         bool IsSupportAgent(string userId);
         public bool IsAgentInTeam(string userId);
     }

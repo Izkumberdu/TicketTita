@@ -307,11 +307,11 @@
         });
 
         var createMessage = '@TempData["CreateMessage"]';
-        var createMessage = '@TempData["UpdateMessage"]';
+        var UpdateMessage = '@TempData["UpdateMessage"]';
         var deleteMessage = sessionStorage.getItem("DeleteSuccess");
         var errMessage = '@TempData["DuplicateErr"]';
         var NoChangesMessage = '@TempData["NoChangesMessage"]';
-
+        var NullFieldsMessage = '@TempData["NullFieldsMessage"]';
       
         if (createMessage) {
             toastr.success(createMessage);
@@ -322,6 +322,10 @@
             sessionStorage.removeItem("DeleteSuccess");
         } else if (NoChangesMessage) {
             toastr.error(NoChangesMessage);
+        } else if (NullFieldsMessage) {
+            toastr.error(NullFieldsMessage);
+        } else if (UpdateMessage) {
+            toastr.success(UpdateMessage);
         }
 
         $(document).ready(function () {

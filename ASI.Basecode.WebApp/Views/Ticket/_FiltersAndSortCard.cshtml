@@ -1,0 +1,141 @@
+﻿@model ASI.Basecode.Services.ServiceModels.PaginatedList<ASI.Basecode.Services.ServiceModels.TicketViewModel>
+@using ASI.Basecode.Data.Models
+
+@{
+    List<string> selectedFilters = ViewBag.SelectedFilters;
+    string sortBy = ViewData["SortBy"] as string;
+    string search = ViewData["Search"] as string;
+    string showOption = ViewData["ShowOption"] as string;
+
+    var users = ViewBag.Users as List<User>;
+    var agents = ViewBag.Agents as List<User>;
+    var teams = ViewBag.Teams as List<Team>;
+    var priorityTypes = ViewBag.PriorityTypes as List<PriorityType>;
+    var statusTypes = ViewBag.StatusTypes as List<StatusType>;
+    var categoryTypes = ViewBag.CategoryTypes as List<CategoryType>;
+
+    var statusDefault = string.Empty;
+    var priorityDefault = string.Empty;
+    var categoryDefault = string.Empty;
+    var sortByDefault = string.Empty;
+}
+
+<div class="col-3">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Ticket Filters & Sort</h5>
+        </div>
+        <div class="card-body">
+            <form method="get" asp-action="GetAll">
+                @if (User.IsInRole("Support Agent"))
+                {
+                    <div class="mb-3">
+                        <label for="showOption">Show Tickets: </label>
+                        <select asp-for="@showOption" id="showOption" name="showOption" class="form-control">
+                            <option value="" selected="@(string.IsNullOrEmpty(showOption))">All</option>
+                            <option value="assigned_me" selected="@(showOption == "assigned_me")">Assigned to me</option>
+                            <option value="assigned_team" selected="@(showOption == "assigned_team")">Assigned to my team</option>
+                            <option value="assigned_none" selected="@(showOption == "assigned_none")">No Assignment</option>
+                        </select>
+                    </div>
+                    <hr />
+                }
+                <div class="mb-3">
+                    <label for="selectedFilters">Status: </label>
+                    <select id="selectedFilters" name="selectedFilters" class="form-control">
+                        <option value="status:all" selected="@(selectedFilters != null && selectedFilters.Contains("status:all"))">All</option>
+                        @foreach (var item in statusTypes)
+                        {
+                            if (!User.IsInRole("Employee") && item.StatusTypeId == "S4") continue;
+                            <option value="status:@item.StatusTypeId" selected="@(selectedFilters != null && selectedFilters.Contains("status:" + item.StatusTypeId))">@item.StatusName</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="selectedFilters">Priority: </label>
+                    <select id="selectedFilters" name="selectedFilters" class="form-control">
+                        <option value="priority:all" selected="@(selectedFilters != null && selectedFilters.Contains("priority:all"))">All</option>
+                        @foreach (var item in priorityTypes)
+                        {
+                            <option value="priority:@item.PriorityTypeId" selected="@(selectedFilters != null && selectedFilters.Contains("priority:" + item.PriorityTypeId))">@item.PriorityName</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="selectedFilters">Category: </label>
+                    <select id="selectedFilters" name="selectedFilters" class="form-control">
+                        <option value="category:all" selected="@(selectedFilters != null && selectedFilters.Contains("category:all"))">All</option>
+                        @foreach (var item in categoryTypes)
+                        {
+                            <option value="category:@item.CategoryTypeId" selected="@(selectedFilters != null && selectedFilters.Contains("category:" + item.CategoryTypeId))">@item.CategoryName</option>
+                        }
+                    </select>
+                </div>
+                <hr />
+                @if (!User.IsInRole("Employee"))
+                {
+                    <div class="mb-3">
+                        <label for="selectedFilters">User: </label>
+                        <select id="selectedFilters" name="selectedFilters" class="form-control">
+                            <option value="">All</option>
+                            @foreach (var item in users)
+                            {
+                                <option value="employee:@item.UserId" selected="@(selectedFilters != null && selectedFilters.Contains("employee:" + item.UserId))">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                }
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="mb-3">
+                        <label for="selectedFilters">Team: </label>
+                        <select id="selectedFilters" name="selectedFilters" class="form-control">
+                            <option value="">All</option>
+                            @foreach (var item in teams)
+                            {
+                                <option value="team:@item.TeamId" selected="@(selectedFilters != null && selectedFilters.Contains("team:" + item.TeamId))">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="selectedFilters">Agent: </label>
+                        <select id="selectedFilters" name="selectedFilters" class="form-control">
+                            <option value="">All</option>
+                            @foreach (var item in agents)
+                            {
+                                <option value="agent:@item.UserId" selected="@(selectedFilters != null && selectedFilters.Contains("agent:" + item.UserId))">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <hr />
+                }
+                <div class="mb-3">
+                    <label for="sortBy">Sort By:</label>
+                    <select asp-for="@sortBy" id="sortBy" name="sortBy" class="form-control">
+                        <option value="updated_desc" selected="@(sortBy == "updated_desc"  || string.IsNullOrEmpty(sortBy))">Recently Updated</option>
+                        <option value="created_desc" selected="@(sortBy == "created_desc")">Newest</option>
+                        <option value="created_asc" selected="@(sortBy == "created_asc")">Oldest</option>
+                        <option value="ticket_asc" selected="@(sortBy == "ticket_asc")">Ticket ID (A-Z)</option>
+                        <option value="ticket_desc" selected="@(sortBy == "ticket_desc")">Ticket ID (Z-A)</option>
+                        <option value="subject_asc" selected="@(sortBy == "subject_asc")">Subject (A-Z)</option>
+                        <option value="subject_desc" selected="@(sortBy == "subject_desc")">Subject (Z-A)</option>
+                    </select>
+                </div>
+                <hr />
+                <button type="submit" class="btn btn-primary w-100">Apply Filter</button>
+                <input type="hidden" name="sortBy" value="@sortBy" />
+                <input type="hidden" name="search" value="@search" />
+                <input type="hidden" name="sortBy" value="@showOption" />
+                <input type="hidden" name="clearFilters" id="clearFilters" value="false" />
+            </form>
+                @if (selectedFilters.Any() || !string.IsNullOrEmpty(sortBy) || !string.IsNullOrEmpty(search) || !string.IsNullOrEmpty(showOption))
+                {
+                    <hr />
+                    <form>
+                        <a href="@Url.Action("GetAll", "Ticket", new { clearFilters = true })" class="btn btn-secondary w-100 text-black">Clear Filters</a>
+                    </form>
+                    <hr />
+                }
+        </div>
+    </div>
+</div>

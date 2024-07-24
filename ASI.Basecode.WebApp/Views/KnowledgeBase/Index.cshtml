@@ -3,6 +3,12 @@
 
 @{
     ViewData["Title"] = "Index";
+    await Html.RenderPartialAsync("_CreateArticleModal", new ASI.Basecode.Services.ServiceModels.KnowledgeBaseViewModel()
+    {
+                ArticleCategories = ViewBag.Categories
+    });
+
+
 }
 
 <div class="d-flex justify-content-between nav-header">
@@ -23,20 +29,19 @@
         @if (User.IsInRole("Admin") || User.IsInRole("Support Agent"))
         {
             <div class="mx-3">
-                <button type="button" class="btn btn-primary btn-radius px-3" onclick="window.location.href='@Url.Action("Create")'">
+                <button type="button" class="btn btn-primary btn-radius px-3" data-toggle="modal" data-target="#createModal">
                     <i class="fa fa-plus"></i>
                     Create New
                 </button>
             </div>
-
         }
     </div>
 </div>
 
 
-<div class="container-sm m-3 mt-5 mb-4">
+<div class="container-sm m-3 mt-4 mb-4">
     <div class="row mb-2 align-items-center">
-        <div class="col-sm text-left">
+        <div class="col text-left">
             @if (Model.HasPreviousPage)
             {
                 <a asp-action="Index"
@@ -56,7 +61,7 @@
             }
         </div>
 
-        <div class="col text-right">
+        <div class="col-md-auto text-right">
             <form asp-action="Index" method="get" class="form-inline d-inline-flex justify-content-end">
                 <div class="form-group mr-2">
                     <select id="categories" name="selectedCategories" multiple="multiple" class="form-control">
@@ -108,9 +113,8 @@
                     <div>
                         @if (User.IsInRole("Admin") || User.IsInRole("Support Agent"))
                         {
-                            @Html.ActionLink("", "Edit", new { articleId = item.ArticleId }, new { @class = "fas fa-pencil action-icon", })
+                            <a href="javascript:void(0);" class="fas fas fa-pencil action-icon" data-toggle="modal" data-target="#editArticleModal" data-articleid="@item.ArticleId" data-toggle="tooltip" title="Edit"></a>
                         }
-                        @Html.ActionLink("", "Details", new { articleId = item.ArticleId }, new { @class = "fas fa-info-circle action-icon", })
                         @if (User.IsInRole("Admin"))
                         {
                             <a href="javascript:void(0);" onclick="displayDeleteModal('@item.ArticleId')" class="fas fa-trash action-icon ms-2"></a>
@@ -141,6 +145,13 @@
 
     </div>
 </div>
+@* Edit Article Modal *@
+<div class="modal fade" id="editArticleModal" tabindex="-1" role="dialog" aria-labelledby="editArticleModallLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content modal-content-article" id="editArticleModalContent">
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <script>
@@ -160,7 +171,15 @@
                 }
             })
         })
-
+        $(document).ready(function () {
+            $('.fa-pencil').click(function () {
+                var articleId = $(this).data('articleid');
+                var url = '@Url.Action("Edit")?articleId=' + articleId;
+                $.get(url, function (data) {
+                    $('#editArticleModalContent').html(data);
+                });
+            });
+        });
     </script>
 
     <script>

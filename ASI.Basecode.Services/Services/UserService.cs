@@ -295,40 +295,7 @@ namespace ASI.Basecode.Services.Services
             return _userRepository.GetRoles();
         }
 
-        public PerformanceReportViewModel GetPerformanceReport(string userId)
-        {
-            var user = _userRepository.RetrieveAll().FirstOrDefault(u => u.UserId == userId && u.RoleId == "Support Agent");
-
-            if (user != null)
-            {
-                var teamMember = _teamRepository.FindTeamMemberByIdAsync(userId).Result;
-                var tickets = _teamRepository.GetResolvedTicketsAssignedToTeamAsync(teamMember.TeamId).Result;
-                var feedbacks = tickets
-                .Where(t => t.Feedback != null)
-                .Select(t => t.Feedback)
-                .ToList();
-                if (teamMember != null)
-                {
-                    var performanceReport = teamMember.Report;
-                    if (performanceReport != null)
-                    {
-                        return new PerformanceReportViewModel
-                        {
-                            ReportId = performanceReport.ReportId,
-                            ResolvedTickets = performanceReport.ResolvedTickets,
-                            AverageResolutionTime = performanceReport.AverageResolutionTime,
-                            AssignedDate = performanceReport.AssignedDate,
-                            Name = user.Name,
-                            AverageRating = CalculateAverageRating(feedbacks),
-                            Feedbacks = feedbacks
-                        };
-                    }
-                }
-            }
-            return null;
-        } // TODO: Implement this method
-
-        private double CalculateAverageRating(List<Feedback> feedbacks)
+        private double CalculateAverageRating(List<Ticket> tickets)
         {
             if (feedbacks == null || feedbacks.Count == 0)
                 return 0;

@@ -151,15 +151,6 @@ namespace ASI.Basecode.Services.Services
                 var team = await _repository.FindByIdAsync(teamId);
                 var agent = await _repository.FindAgentByIdAsync(agentId);
 
-                var performanceReport = new PerformanceReport
-                {
-                    ReportId = Guid.NewGuid().ToString(),
-                    ResolvedTickets = 0,
-                    AverageResolutionTime = 0.0,
-                    AssignedDate = DateTime.UtcNow
-                };
-                await _performanceReportRepository.AddPerformanceReportAsync(performanceReport);
-
                 var model = new TicketViewModel();
                 foreach (var ticketAssignment in agent.TicketAssignmentAgents)
                 {
@@ -174,10 +165,8 @@ namespace ASI.Basecode.Services.Services
                 {
                     TeamId = team.TeamId,
                     UserId = agentId,
-                    ReportId = performanceReport.ReportId,
                     Team = team,
-                    User = agent,
-                    Report = performanceReport
+                    User = agent
                 };
 
                 team.TeamMembers.Add(teamMember);

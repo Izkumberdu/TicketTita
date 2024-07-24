@@ -1,7 +1,7 @@
 ﻿@model ASI.Basecode.Services.ServiceModels.TicketViewModel
 
 @{
-    ViewData["Title"] = "ViewTicket";
+    ViewData["Title"] = $"View Ticket";
     await Html.RenderPartialAsync("_FeedbackModal", Model);
     await Html.RenderPartialAsync("_EditTicketModal", Model);
     await Html.RenderPartialAsync("_DeleteModal");
@@ -16,76 +16,10 @@
     <link rel="stylesheet" href="~/css/ticket.css" />
 }
 
-<h1 class="nav-header display-6">
-    View Ticket
-    @if (User.IsInRole("Admin") || User.IsInRole("Support Agent"))
-    {
-        if (Model.StatusType.StatusName != "Resolved" && Model.StatusType.StatusName != "Closed")
-        {
-            if (!User.IsInRole("Admin") && (Model.TicketAssignment?.AgentId == null || Model.TicketAssignment?.AgentId == ViewBag.UserId))
-            {
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateTrackingModal">
-                    Update Status/Priority
-                </button>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateAssignmentModal">
-                    Update Assignment
-                </button>
-                if(Model.TicketAssignment == null)
-                {
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateCategoryModal">
-                        Update Category
-                    </button>
-                }
-            }
-            else if (User.IsInRole("Admin"))
-            {
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateTrackingModal">
-                    Update Tracking
-                </button>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateAssignmentModal">
-                    Update Assignment
-                </button>
-                if (Model.TicketAssignment == null)
-                {
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateCategoryModal">
-                        Update Category
-                    </button>
-                }
-            }
-        }
-    } 
-    else
-    {
-        if(Model.StatusType.StatusName != "Resolved" && Model.StatusType.StatusName != "Closed")
-        {
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateTrackingModal">
-                Update Tracking
-            </button>
-
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editTicketModal">
-                Update Ticket
-            </button>
-            if (Model.TicketAssignment == null)
-            {
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateCategoryModal">
-                    Update Category
-                </button>
-            }
-        }
-        if (Model.StatusType.StatusName == "Closed")
-        {
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#reopenTicketModal">
-                Reopen Ticket
-            </button>
-        }
-        @if (Model.Feedback == null && User.IsInRole("Employee") && Model.StatusType.StatusName == "Resolved")
-        {
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#feedbackModal">
-                Provide Feedback
-            </button>
-        }
-    }
-</h1>
+<div class="d-flex justify-content-between nav-header">
+    <a asp-action="GetAll" class="text-black m-2"><h2 class="font-weight-bold"><i class="fa-solid fa-arrow-left mx-2"></i></h2></a>
+    @await Html.PartialAsync("_UpdateButton", Model)
+</div>
 
 <div class="container-fluid p-4">
     <div class="card px-5 py-4 mb-4">
@@ -160,10 +94,6 @@
                         <a href="@Url.Action("DownloadAttachment", "Ticket", new { id = Model.TicketId })">@Model.Attachment.Name</a>
                     }
                 </div>
-            </div>
-
-            <div>
-                <a asp-action="GetAll">Back to List</a>
             </div>
         </div>
     </div>

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using static ASI.Basecode.Services.Exceptions.TicketExceptions;
 using static ASI.Basecode.Services.Exceptions.TeamExceptions;
+using System.Security.Claims;
 
 namespace ASI.Basecode.Services.Services
 {
@@ -27,8 +28,10 @@ namespace ASI.Basecode.Services.Services
             comment.User = user;
             comment.Ticket = ticket;
             comment.Parent = parent;
+            ticket.UpdatedDate = DateTime.Now;
 
             await _repository.AddCommentAsync(comment);
+            await LogActivityAsync(ticket, user.UserId, "New Comment", $"New comment \"{(comment.Content.Length > 15 ? comment.Content.Substring(0, 15) + "..." : comment.Content)}\"");
         }
 
         /// <summary>

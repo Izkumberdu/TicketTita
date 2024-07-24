@@ -1,32 +1,59 @@
-﻿.read-notification {
+﻿@import url('notification.css');
+.read-notification {
     background-color: #F0F0F0;
 }
 
-
-.btn-with-icon {
-    color: var(--background-color6);
-    text-decoration: none;
-    padding-left: 5px;
-    padding-right: 5px;
-    padding-top: 0px;
-    padding-bottom: 0px;
+.btn:active {
+    color: var(--primary-color) !important;
 }
-    .btn-with-icon:hover {
-        background-color: var(--background-color6);
-        color: black;
-        border-radius: 4px;
+
+.btn:focus {
+    box-shadow: none !important;
+}
+
+.notif-bell {
+    text-decoration: none;
+    color: var(--text-color-gray);
+}
+
+    .notif-bell:hover,
+    .notif-bell:active {
         text-decoration: none;
-        padding-left: 5px;
-        padding-right: 5px;
-        padding-top: 0px;
-        padding-bottom: 0px;
+        color: var(--primary-color);
     }
 
-    .btn-with-icon:active, .btn-with-icon:focus {
-        box-shadow: none !important;
-        background-color: var(--background-color6);
-        padding-left: 5px;
-        padding-right: 5px;
-        padding-top: 0px;
-        padding-bottom: 0px;
+.modal {
+    margin-top: 80px;
+}
+
+.modal .modal-dialog-aside {
+    width: contain;
+    height: 100%;
+    margin: 0;
+    transform: translate(0);
+    transition: transform .2s;
+}
+
+    .modal .modal-dialog-aside .modal-content {
+        height: inherit;
+        border: 0;
+        border-radius: 0;
     }
+
+        .modal .modal-dialog-aside .modal-content .modal-body {
+            overflow-y: auto
+        }
+
+.modal.fixed-right .modal-dialog-aside {
+    margin-left: auto;
+    transform: translateX(100%);
+}
+
+.modal.fixed-left .modal-dialog-aside {
+    margin-right: auto;
+    transform: translateX(-100%);
+}
+
+.modal.show .modal-dialog-aside {
+    transform: translateX(0);
+}

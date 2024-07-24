@@ -1,9 +1,8 @@
 ﻿@model ASI.Basecode.Services.ServiceModels.PaginatedList<ASI.Basecode.Services.ServiceModels.TicketViewModel>
-@using ASI.Basecode.Data.Models
-@using Humanizer
 
 @{
-    ViewData["Title"] = "ViewAll";
+    ViewData["Title"] = "All Tickets";
+    await Html.RenderPartialAsync("_ConfirmationModal");
     await Html.RenderPartialAsync("_DeleteModal");
     await Html.RenderPartialAsync("_CreateTicketModal", new ASI.Basecode.Services.ServiceModels.TicketViewModel());
 
@@ -12,36 +11,13 @@
     string search = ViewData["Search"] as string;
     string showOption = ViewData["ShowOption"] as string;
     int pageIndex = Model.PageIndex;
-
-    var priorityTypes = ViewBag.PriorityTypes as List<PriorityType>;
-    var statusTypes = ViewBag.StatusTypes as List<StatusType>;
-    var categoryTypes = ViewBag.CategoryTypes as List<CategoryType>;
-    var users = ViewBag.Users as List<User>;
-    var agents = ViewBag.Agents as List<User>;
-    var teams = ViewBag.Teams as List<Team>;
-    var userDefaults = ViewBag.UserDefaults as List<string>;
-
-    var statusDefault = string.Empty;
-    var priorityDefault = string.Empty;
-    var categoryDefault = string.Empty;
-    var sortByDefault = string.Empty;
-    foreach(var defaults in userDefaults)
-    {
-        var filterParts = defaults.Split(":");
-        var filterBy = filterParts[0];
-        var filterValue = filterParts[1];
-
-        if(filterBy == "s") statusDefault = filterValue;
-        if (filterBy == "p") priorityDefault = filterValue;
-        if (filterBy == "c") categoryDefault = filterValue;
-        if(filterBy == "sb") sortByDefault = filterValue;
-    }
+    int pageSize = (ViewData["PageSize"] as int?) ?? 5;
 }
 
 <div class="d-flex justify-content-between nav-header">
     <h1 class="display-6">Tickets</h1>
     <div class="d-flex justify-content-between">
-        <form method="get" asp-action="GetAll" asp-route-sortBy="@sortBy" asp-route-search="@search" asp-route-showOption="@showOption" asp-route-pageIndex="@pageIndex">
+        <form method="get" asp-action="GetAll" asp-route-sortBy="@sortBy" asp-route-search="@search" asp-route-showOption="@showOption" asp-route-pageIndex="@pageIndex" asp-route-pageSize="@pageSize">
             @for (int i = 0; i < selectedFilters.Count; i++)
             {
                 <input type="hidden" name="selectedFilters" value="@selectedFilters[i]" />
@@ -84,84 +60,7 @@
                 <div class="container py-3">
                     @foreach (var item in Model)
                     {
-                        <div class="card mb-3 mx-auto border-0 shadow-sm card-hover" style="max-width: 1000px; border-radius: 15px;">
-                            <div class="card-header bg-transparent d-flex justify-content-between align-items-center" style="border-radius: 15px 15px 0 0;">
-                                <div>
-                                    <span class="ticket-id"><strong>TICKET ID# @item.TicketId</strong></span>
-                                    <span class="border mx-1 py-0.5 px-3 btn-radius @(GetStatusCssClass(item.StatusType.StatusName))">@item.StatusType.StatusName</span>
-                                    <span class="border mx-1 py-0.5 px-3 btn-radius @(GetPriorityCssClass(item.PriorityType.PriorityName))">@item.PriorityType.PriorityName</span>
-                                    <span class="border mx-1 py-0.5 px-3 btn-radius @(GetCategoryCssClass(item.CategoryType.CategoryName))">@item.CategoryType.CategoryName</span>
-                                </div>
-                                <div>
-                                    @Html.ActionLink(" ", "GetTicket", new { id = item.TicketId }, new { @class = "fas fa-info-circle action-icon", title = "Details" })
-                                    @if (User.IsInRole("Employee"))
-                                    {
-                                        @if (item.StatusType.StatusName.Contains("Resolved"))
-                                        {
-                                            <text> | </text>
-                                            @if (item.Feedback == null)
-                                            {
-                                                @Html.ActionLink(" ", "GetTicket", new { id = item.TicketId, showModal = "provideFeedback" }, new { @class = "fas fa-comment-dots action-icon", title = "Provide Feedback" })
-                                            }
-                                            else
-                                            {
-                                                @Html.ActionLink(" ", "GetTicket", new { id = item.TicketId }, new { @class = "fas fa-comment-dots action-icon", title = "View Feedback" })
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <text> | </text>
-                                            @Html.ActionLink(" ", "GetTicket", new { id = item.TicketId, showModal = "editTicket" }, new { @class = "fas fa-edit action-icon", title = "Edit" })
-                                        }
-                                        <text> | </text>
-                                        <a href="javascript:void(0);" onclick="displayDeleteModal('@item.TicketId', '@(item.Subject.Length > 20 ? item.Subject.Substring(0, 20) + "..." : item.Subject)')">
-                                            <i class="fas fa-trash action-icon" title="Delete"></i>
-                                        </a>
-                                    }
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-end">
-                                    @if (!User.IsInRole("Employee"))
-                                    {
-                                        <div>
-                                            <small class="text-muted"><strong>@item.User.Name</strong></small>
-                                        </div>
-                                    }
-                                    <div>
-                                        <small class="text-muted">
-                                            Assignation:
-                                            @if (item.TicketAssignment?.Team == null && item.TicketAssignment?.Agent == null)
-                                            {
-                                                <strong>None</strong>
-                                            }
-                                            @if (item.TicketAssignment?.Team != null)
-                                            {
-                                                <strong>@item.TicketAssignment.Team.Name</strong>
-                                            }
-                                            @if (item.TicketAssignment?.Team != null && item.TicketAssignment?.Agent != null)
-                                            {
-                                                <text> | </text>
-                                            }
-                                            @if (item.TicketAssignment?.Agent != null)
-                                            {
-                                                <strong>@(item.TicketAssignment.Agent.Name == User.Identity.Name ? "Me" : item.TicketAssignment.Agent.Name)</strong>
-                                            }
-                                        </small>
-                                    </div>
-                                </div>
-                                <h5 class="card-title my-2">@item.Subject</h5>
-                                <div class="d-flex justify-content-between align-items-end">
-                                    <p class="card-text mb-2">@((item.IssueDescription.Length > 50) ? item.IssueDescription.Substring(0, 50) + "..." : item.IssueDescription)</p>
-                                    <div>
-                                        <p class="card-text">
-                                            <small class="text-muted">Recent activity: --<i>Ticket created</i>--</small>
-                                            <small class="text-muted"><i title="@item.UpdatedDate">@item.UpdatedDate?.ToUniversalTime().Humanize()</i></small>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        @await Html.PartialAsync("_TicketCard", item)
                     }
                 </div>
             }
@@ -171,12 +70,13 @@
                     @if (Model.HasPreviousPage)
                     {
                         <li class="page-item">
-                            <form method="get" asp-action="GetAll" asp-route-pageIndex="@(Model.PageIndex - 1)" asp-route-sortBy="@sortBy" asp-route-search="@search" asp-route-showOption="@showOption">
+                            <form method="get" asp-action="GetAll" asp-route-pageIndex="@(Model.PageIndex - 1)" asp-route-sortBy="@sortBy" asp-route-search="@search" asp-route-showOption="@showOption" asp-route-pageSize="@pageSize">
                                 @for (int i = 0; i < selectedFilters.Count; i++)
                                 {
                                     <input type="hidden" name="selectedFilters" value="@selectedFilters[i]" />
                                 }
                                 <input type="hidden" name="pageIndex" value="@(Model.PageIndex - 1)" />
+                                <input type="hidden" name="pageSize" value="@pageSize" />
                                 <button type="submit" class="page-link">Previous</button>
                             </form>
                         </li>
@@ -184,12 +84,13 @@
                     @for (int i = 1; i <= Model.TotalPages; i++)
                     {
                         <li class="page-item @(i == Model.PageIndex ? "active" : "")">
-                            <form method="get" asp-action="GetAll" asp-route-pageIndex="@i" asp-route-sortBy="@sortBy" asp-route-search="@search" asp-route-showOption="@showOption">
+                            <form method="get" asp-action="GetAll" asp-route-pageIndex="@i" asp-route-sortBy="@sortBy" asp-route-search="@search" asp-route-showOption="@showOption" asp-route-pageSize="@pageSize">
                                 @for (int j = 0; j < selectedFilters.Count; j++)
                                 {
                                     <input type="hidden" name="selectedFilters" value="@selectedFilters[j]" />
                                 }
                                 <input type="hidden" name="pageIndex" value="@i" />
+                                <input type="hidden" name="pageSize" value="@pageSize" />
                                 <button type="submit" class="page-link">@i</button>
                             </form>
                         </li>
@@ -197,139 +98,25 @@
                     @if (Model.HasNextPage)
                     {
                         <li class="page-item">
-                            <form method="get" asp-action="GetAll" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-sortBy="@sortBy" asp-route-search="@search" asp-route-showOption="@showOption">
+                            <form method="get" asp-action="GetAll" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-sortBy="@sortBy" asp-route-search="@search" asp-route-showOption="@showOption" asp-route-pageSize="@pageSize">
                                 @for (int i = 0; i < selectedFilters.Count; i++)
                                 {
                                     <input type="hidden" name="selectedFilters" value="@selectedFilters[i]" />
                                 }
                                 <input type="hidden" name="pageIndex" value="@(Model.PageIndex + 1)" />
+                                <input type="hidden" name="pageSize" value="@pageSize" />
                                 <button type="submit" class="page-link">Next</button>
                             </form>
                         </li>
                     }
+                    <li class="d-flex align-items-center ml-2">
+                        <label for="pageSize" class="mr-2 mb-0">Items per page:</label>
+                        <input type="number" id="pageSize" name="pageSize" class="form-control" style="width: 70px;" min="1" value="@pageSize" />
+                    </li>
                 </ul>
             </nav>
-
         </div>
-
-        <div class="col-3">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Ticket Filters & Sort</h5>
-                </div>
-                <div class="card-body">
-                    <form method="get" asp-action="GetAll">
-                        @if (User.IsInRole("Support Agent"))
-                        {
-                            <div class="mb-3">
-                                <label for="showOption">Show Tickets: </label>
-                                <select asp-for="@showOption" id="showOption" name="showOption" class="form-select">
-                                    <option value="" selected="@(string.IsNullOrEmpty(showOption))">All</option>
-                                    <option value="assigned_me" selected="@(showOption == "assigned_me")">Assigned to me</option>
-                                    <option value="assigned_team" selected="@(showOption == "assigned_team")">Assigned to my team</option>
-                                    <option value="assigned_none" selected="@(showOption == "assigned_none")">No Assignment</option>
-                                </select>
-                            </div>
-                            <hr />
-                        }
-                        <div class="mb-3">
-                            <label for="selectedFilters">Status: </label>
-                            <select id="selectedFilters" name="selectedFilters">
-                                <option value="">Default: @statusDefault</option>
-                                <option value="status:all" selected="@(selectedFilters != null && selectedFilters.Contains("status:all") ? "selected" : null)">All</option>
-                                @foreach (var item in statusTypes)
-                                {
-                                    if (!User.IsInRole("Employee") && item.StatusTypeId == "S4") continue;
-                                    <option value="status:@item.StatusTypeId" selected="@(selectedFilters != null && selectedFilters.Contains("status:" + item.StatusTypeId) ? "selected" : null)">@item.StatusName</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="selectedFilters">Priority: </label>
-                            <select id="selectedFilters" name="selectedFilters">
-                                <option value="">Default: @priorityDefault</option>
-                                <option value="priority:all" selected="@(selectedFilters != null && selectedFilters.Contains("priority:all") ? "selected" : null)">All</option>
-                                @foreach (var item in priorityTypes)
-                                {
-                                    <option value="priority:@item.PriorityTypeId" selected="@(selectedFilters != null && selectedFilters.Contains("priority:" + item.PriorityTypeId) ? "selected" : null)">@item.PriorityName</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="selectedFilters">Category: </label>
-                            <select id="selectedFilters" name="selectedFilters">
-                                <option value="">Default: @categoryDefault</option>
-                                <option value="category:all" selected="@(selectedFilters != null && selectedFilters.Contains("category:all") ? "selected" : null)">All</option>
-                                @foreach (var item in categoryTypes)
-                                {
-                                    <option value="category:@item.CategoryTypeId" selected="@(selectedFilters != null && selectedFilters.Contains("category:" + item.CategoryTypeId) ? "selected" : null)">@item.CategoryName</option>
-                                }
-                            </select>
-                        </div>
-                        <hr />
-                        @if (!User.IsInRole("Employee"))
-                        {
-                            <div class="mb-3">
-                                <label for="selectedFilters">User: </label>
-                                <select id="selectedFilters" name="selectedFilters">
-                                    <option value="">All</option>
-                                    @foreach (var item in users)
-                                    {
-                                        <option value="employee:@item.UserId" selected="@(selectedFilters != null && selectedFilters.Contains("employee:" + item.UserId) ? "selected" : null)">@item.Name</option>
-                                    }
-                                </select>
-                            </div>
-                        }
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <div class="mb-3">
-                                <label for="selectedFilters">Team: </label>
-                                <select id="selectedFilters" name="selectedFilters">
-                                    <option value="">All</option>
-                                    @foreach (var item in teams)
-                                    {
-                                        <option value="team:@item.TeamId" selected="@(selectedFilters != null && selectedFilters.Contains("team:" + item.TeamId) ? "selected" : null)">@item.Name</option>
-                                    }
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="selectedFilters">Agent: </label>
-                                <select id="selectedFilters" name="selectedFilters">
-                                    <option value="">All</option>
-                                    @foreach (var item in agents)
-                                    {
-                                        <option value="agent:@item.UserId" selected="@(selectedFilters != null && selectedFilters.Contains("agent:" + item.UserId) ? "selected" : null)">@item.Name</option>
-                                    }
-                                </select>
-                            </div>
-                            <hr />
-                        }
-                        <div class="mb-3">
-                            <label for="sortBy" class="mr-2 mb-0">Sort By:</label>
-                            <select asp-for="@sortBy" id="sortBy" name="sortBy" class="form-select">
-                                <option value="" selected="@(string.IsNullOrEmpty(sortBy))">Default: @sortByDefault</option>
-                                <option value="updated_desc" selected="@(sortBy == "updated_desc")">Recently Updated</option>
-                                <option value="created_desc" selected="@(sortBy == "created_desc")">Newest</option>
-                                <option value="created_asc" selected="@(sortBy == "created_asc")">Oldest</option>
-                                <option value="ticket_asc" selected="@(sortBy == "ticket_asc")">Ticket ID (A-Z)</option>
-                                <option value="ticket_desc" selected="@(sortBy == "ticket_desc")">Ticket ID (Z-A)</option>
-                                <option value="subject_asc" selected="@(sortBy == "subject_asc")">Subject (A-Z)</option>
-                                <option value="subject_desc" selected="@(sortBy == "subject_desc")">Subject (Z-A)</option>
-                            </select>
-                        </div>
-                        <hr />
-                        @if (selectedFilters.Any() || !string.IsNullOrEmpty(sortBy) || !string.IsNullOrEmpty(search) || !string.IsNullOrEmpty(showOption))
-                        {
-                            <a href="@Url.Action("GetAll", "Ticket")" class="btn btn-secondary w-100 text-black">Clear Filters</a>
-                            <hr />
-                        }
-                        <button type="submit" class="btn btn-primary w-100">Apply Filter</button>
-                        <input type="hidden" name="sortBy" value="@sortBy" />
-                        <input type="hidden" name="search" value="@search" />
-                    </form>
-                </div>
-            </div>
-        </div>
+        @await Html.PartialAsync("_FiltersAndSortCard", Model)
     </div>
 </div>
 
@@ -339,64 +126,17 @@
 <input type="hidden" id="deleteUrl" value="@Url.Action("Delete", "Ticket")" />
 
 @section Scripts {
+    <script src="~/js/confirm.js"></script>
     <script src="~/js/delete.js"></script>
     <script src="~/js/feedback.js"></script>
     <script src="~/js/toastrNotification.js"></script>
-    <script src="~/js/confirm.js"></script>
     <script src="~/js/ticket.js"></script>
-}
-
-@functions {
-    string GetPriorityCssClass(string PriorityName)
-    {
-        switch (PriorityName.ToLower())
-        {
-            case "critical":
-                return "priority-critical";
-            case "high":
-                return "priority-high";
-            case "medium":
-                return "priority-medium";
-            case "low":
-                return "priority-low";
-            default:
-                return "";
-        }
-    }
-
-    string GetStatusCssClass(string StatusName)
-    {
-        switch (StatusName.ToLower())
-        {
-            case "open":
-                return "status-open";
-            case "closed":
-                return "status-closed";
-            case "in progress":
-                return "status-in-progress";
-            case "resolved":
-                return "status-resolved";
-            default:
-                return "";
-        }
-    }
-
-    string GetCategoryCssClass(string CategoryName)
-    {
-        switch (CategoryName.ToLower())
-        {
-            case "software":
-                return "category-software";
-            case "hardware":
-                return "category-hardware";
-            case "network":
-                return "category-network";
-            case "account":
-                return "category-account";
-            case "other":
-                return "category-other";
-            default:
-                return "";
-        }
-    }
+    <script>
+        document.getElementById('pageSize').addEventListener('change', function () {
+            const url = new URL(window.location.href);
+            url.searchParams.set('pageSize', this.value);
+            url.searchParams.set('pageIndex', 1);
+            window.location.href = url.toString();
+        });
+    </script>
 }

@@ -42,7 +42,7 @@ namespace ASI.Basecode.WebApp
                     Name = $"{this._environment.ApplicationName}_{token.CookieName}"
                 };
                 options.LoginPath = new PathString("/Account/Login");
-                options.AccessDeniedPath = new PathString("/html/Forbidden.html");
+                options.AccessDeniedPath = new PathString("/ticket/all");
                 options.ReturnUrlParameter = "ReturnUrl";
                 options.TicketDataFormat = new CustomJwtDataFormat(SecurityAlgorithms.HmacSha256, _tokenValidationParameters, Configuration, tokenProviderOptionsFactory);
             });

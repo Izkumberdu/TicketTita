@@ -50,19 +50,20 @@
                         <label asp-for="IssueDescription" class="control-label"></label>
                         <textarea asp-for="IssueDescription" id="issueDescription" class="form-control"></textarea>
                         <span asp-validation-for="IssueDescription" class="text-danger"></span>
-                        <span id="remainingDescriptionChars" class="text-muted">800 characters remaining</span>
+                        <span id="remainingDescriptionChars" class="text-muted small">800 characters remaining</span>
                     </div>
 
                     <div class="form-group">
                         <label for="File">Attachment</label>
                         <input type="file" name="File" class="form-control" />
                         <button id="removeButton" class="btn btn-danger" style="display: none; margin-top: 10px;">Remove File</button>
+                        <span id="attachmentLimits" class="text-muted small">Max file size: 5mb. Accepted formats: jpeg, png, pdf, docx</span>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="submitCreateTicket()">Create</button>
+                <button type="button" class="btn btn-primary" onclick="validateCreateTicket()">Create</button>
             </div>
         </div>
     </div>

@@ -11,15 +11,17 @@
             </div>
             <div class="modal-body">
                 <form id="updateTrackingForm">
-                    <div class="form-group">
-                        <label for="priorityId">Priority</label>
-                        <select asp-for="PriorityTypeId" id="priorityId" class="form-control">
-                            @foreach (var priority in Model.PriorityTypes)
-                            {
-                                <option value="@priority.PriorityTypeId">@priority.PriorityName</option>
-                            }
-                        </select>
-                    </div>
+                    @if(!User.IsInRole("Employee")){
+                        <div class="form-group">
+                            <label for="priorityId">Priority</label>
+                            <select asp-for="PriorityTypeId" id="priorityId" class="form-control">
+                                @foreach (var priority in Model.PriorityTypes)
+                                {
+                                    <option value="@priority.PriorityTypeId">@priority.PriorityName</option>
+                                }
+                            </select>
+                        </div>
+                    }
                     <div class="form-group">
                         <label for="statusId">Status</label>
                         <select asp-for="StatusTypeId" id="statusId" class="form-control">

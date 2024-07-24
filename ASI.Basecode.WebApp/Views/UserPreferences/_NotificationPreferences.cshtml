@@ -1,0 +1,82 @@
+﻿@model ASI.Basecode.Services.ServiceModels.UserPreferencesViewModel
+
+<h5>Ticket Notifications</h5>
+<div class="row">
+    <div class="col-md-3 form-group">
+        <div class="form-group">
+            <label for="notifyCreation">Creation</label>
+            <select class="form-control" id="notifyCreation" name="Preferences[notifyCreation]">
+                <option value="notify_creation_yes" selected="@(string.IsNullOrEmpty(Model.Preferences.GetValueOrDefault("notifyCreation")) || 
+                        Model.Preferences.GetValueOrDefault("notifyCreation") == "notify_creation_yes")">Yes</option>
+                <option value="notify_creation_no" selected="@(Model.Preferences.GetValueOrDefault("notifyCreation") == "notify_creation_no")">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="notifyDetailsUpdate">Details Update</label>
+            <select class="form-control" id="notifyDetailsUpdate" name="Preferences[notifyDetailsUpdate]">
+                <option value="notify_update_yes" selected="@(string.IsNullOrEmpty(Model.Preferences.GetValueOrDefault("notifyDetailsUpdate")) ||
+                        Model.Preferences.GetValueOrDefault("notifyDetailsUpdate") == "notify_update_yes")">Yes</option>
+                <option value="notify_update_no" selected="@(Model.Preferences.GetValueOrDefault("notifyDetailsUpdate") == "notify_update_no")">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="notifyAssignmentUpdate">Assignment Update</label>
+            <select class="form-control" id="notifyAssignmentUpdate" name="Preferences[notifyAssignmentUpdate]">
+                <option value="notify_assignment_yes" selected="@(string.IsNullOrEmpty(Model.Preferences.GetValueOrDefault("notifyAssignmentUpdate")) ||
+                        Model.Preferences.GetValueOrDefault("notifyAssignmentUpdate") == "notify_assignment_yes")">Yes</option>
+                <option value="notify_assignment_no" selected="@(Model.Preferences.GetValueOrDefault("notifyAssignmentUpdate") == "notify_assignment_no")">No</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-md-3 form-group">
+        <div class="form-group">
+            <label for="notifyStatusPriorityUpdate">Status & Priority Update</label>
+            <select class="form-control" id="notifyStatusPriorityUpdate" name="Preferences[notifyStatusPriorityUpdate]">
+                <option value="notify_statuspriority_yes" selected="@(string.IsNullOrEmpty(Model.Preferences.GetValueOrDefault("notifyStatusPriorityUpdate")) ||
+                Model.Preferences.GetValueOrDefault("notifyStatusPriorityUpdate") == "notify_statuspriority_yes")">Yes</option>
+                <option value="notify_statuspriority_no" selected="@(Model.Preferences.GetValueOrDefault("notifyStatusPriorityUpdate") == "notify_statuspriority_no")">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="notifyNewComment">New Comment</label>
+            <select class="form-control" id="notifyNewComment" name="Preferences[notifyNewComment]">
+                <option value="notify_newcomment_yes" selected="@(string.IsNullOrEmpty(Model.Preferences.GetValueOrDefault("notifyNewComment")) ||
+                Model.Preferences.GetValueOrDefault("notifyNewComment") == "notify_newcomment_yes")">Yes</option>
+                <option value="notify_newcomment_no" selected="@(Model.Preferences.GetValueOrDefault("notifyNewComment") == "notify_newcomment_no")">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="notifyNewFeedback">New Feedback</label>
+            <select class="form-control" id="notifyNewFeedback" name="Preferences[notifyNewFeedback]">
+                <option value="notify_newfeedback_yes" selected="@(string.IsNullOrEmpty(Model.Preferences.GetValueOrDefault("notifyNewFeedback")) ||
+                Model.Preferences.GetValueOrDefault("notifyNewFeedback") == "notify_newfeedback_yes")">Yes</option>
+                <option value="notify_newfeedback_no" selected="@(Model.Preferences.GetValueOrDefault("notifyNewFeedback") == "notify_newfeedback_no")">No</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<h5>Agent Notifications</h5>
+<div class="row">
+    <div class="col-md-3 form-group">
+        <div class="form-group">
+            <label for="notifyCreation">Reminder Frequency</label>
+            <select class="form-control" id="notifyCreation" name="Preferences[reminderFrequency]">
+                @*@for (int i = 30; i <= 50; i += 30)
+                {
+                    <option value="@i" selected="@(i.ToString() == Model.Preferences.GetValueOrDefault("reminderFrequency", "30"))">@i</option>
+                }*@
+            </select>
+        </div>
+    </div>
+    <div class="col-md-3 form-group">
+        <div class="form-group">
+            <label for="notifyDetailsUpdate">Team Assignment</label>
+            <select class="form-control" id="notifyDetailsUpdate" name="Preferences[notifyAgentTeamChange]">
+                <option value="notify_agentteam_yes" selected="@(string.IsNullOrEmpty(Model.Preferences.GetValueOrDefault("notifyAgentTeamChange")) ||
+                        Model.Preferences.GetValueOrDefault("notifyAgentTeamChange") == "notify_agentteam_yes")">Yes</option>
+                <option value="notify_agentteam_no" selected="@(Model.Preferences.GetValueOrDefault("notifyAgentTeamChange") == "notify_agentteam_no")">No</option>
+            </select>
+        </div>
+    </div>
+</div>

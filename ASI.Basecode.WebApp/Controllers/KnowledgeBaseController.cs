@@ -37,7 +37,7 @@ namespace ASI.Basecode.WebApp.Controllers
             _knowledgeBaseService = knowledgeBaseService;
         }
 
-        #region
+        #region GET Functions
 
         /// <summary>
         /// Returns Sample Crud View.
@@ -47,7 +47,7 @@ namespace ASI.Basecode.WebApp.Controllers
         [Authorize]
         public IActionResult Index(string searchTerm, List<string> selectedCategories, string sortBy = "CreatedDate", string sortOrder = "asc", int pageNumber = 1)
         {
-            var pageSize = UserPaginationPreference;
+            var pageSize = 5;
 
             var totalArticlesCount = _knowledgeBaseService.CountArticles(searchTerm, selectedCategories);
             var articles = _knowledgeBaseService.SearchArticles(searchTerm, selectedCategories, sortBy, sortOrder, pageNumber, pageSize);
@@ -106,7 +106,7 @@ namespace ASI.Basecode.WebApp.Controllers
         {
             var article = _knowledgeBaseService.GetArticleById(articleId);
             article.ArticleCategories = _knowledgeBaseService.GetArticleCategories();
-            return View(article);
+            return PartialView("_EditArticleModal", article);
         }
 
         /// <summary>Returns the Delete View</summary>
@@ -123,7 +123,7 @@ namespace ASI.Basecode.WebApp.Controllers
         }
         #endregion
 
-        #region
+        #region POST Functions
         /// <summary>Posts the create.</summary>
         /// <param name="model">The model.</param>
         /// <returns>

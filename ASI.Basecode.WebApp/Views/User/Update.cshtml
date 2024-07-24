@@ -4,7 +4,6 @@
     ViewData["Title"] = "Update";
     bool isSuper = User.HasClaim("IsSuperAdmin", "true");
 }
-
 @section styles {
     <link rel="stylesheet" href="~/css/user.css" />
 }
@@ -17,7 +16,7 @@
 <h5 class="modal-title font-weight-bold d-flex justify-content-center mb-3" id="editUserModalLabel">Edit User</h5>
 
 <div class="modal-body mx-5">
-    <form id="updateUserForm" asp-action="PostUpdate" method="post">
+    <form id="updateUserForm" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input asp-for="UserId" type="hidden" />
         <input asp-for="CreatedBy" type="hidden" />
@@ -48,6 +47,9 @@
         <div class="form-row">
             <div class="form-group col-md-2">
                 <label asp-for="Password" class="control-label"></label>
+        
+            </div>
+            <div class="form-group col-md-10">
                 <input asp-for="Password" class="form-control" value="" placeholder="Leave blank to keep current password" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
@@ -78,13 +80,9 @@
     </form>
 </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+
 
     <script>
-
 
         $(document).ready(function () {
             $('#updateUserForm').submit(function (e) {
@@ -96,10 +94,9 @@
                     data: $(this).serialize(),
                     success: function (result) {
                         if (result.success) {
-                            toastr.success(result.message);
                             location.reload();
                         } else {
-                            toastr.error(result.message);
+                        location.reload();
                         }
                     },
                     error: function () {
@@ -109,4 +106,3 @@
             });
         });
     </script>
-}

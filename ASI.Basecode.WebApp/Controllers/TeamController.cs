@@ -57,8 +57,7 @@ namespace ASI.Basecode.WebApp.Controllers
         {
             return await HandleExceptionAsync(async () =>
             {
-                var pageSize = UserPaginationPreference;
-                var teams = await _teamService.GetAllAsync(sortBy, filterBy, pageIndex, pageSize);
+                var teams = await _teamService.GetAllAsync(sortBy, filterBy, pageIndex, 5);
 
                 ViewData["FilterBy"] = filterBy;
                 ViewData["SortBy"] = sortBy;

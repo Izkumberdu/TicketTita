@@ -23,7 +23,7 @@
                         <label asp-for="IssueDescription" class="control-label"></label>
                         <textarea asp-for="IssueDescription" id="issueDescription" class="form-control"></textarea>
                         <span asp-validation-for="IssueDescription" class="text-danger"></span>
-                        <span id="remainingDescriptionChars" class="text-muted">800 characters remaining</span>
+                        <span id="remainingDescriptionChars" class="text-muted small">800 characters remaining</span>
                     </div>
                     <div class="form-group">
                         <div id="attachmentDetails" style="display: @(Model.Attachment != null ? "block" : "none")">
@@ -40,6 +40,7 @@
                         <div id="fileUpload" style="display: @(Model.Attachment == null ? "block" : "none")">
                             <label for="File">Attachment</label>
                             <input type="file" id="fileInput" name="File" class="form-control" />
+                            <span id="attachmentLimits" class="text-muted small">Max file size: 5mb. Accepted formats: jpeg, png, pdf, docx</span>
                         </div>
                     </div>
                 </form>

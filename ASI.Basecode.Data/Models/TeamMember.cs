@@ -7,9 +7,7 @@ namespace ASI.Basecode.Data.Models
     {
         public string TeamId { get; set; }
         public string UserId { get; set; }
-        public string ReportId { get; set; }
 
-        public virtual PerformanceReport Report { get; set; }
         public virtual Team Team { get; set; }
         public virtual User User { get; set; }
     }

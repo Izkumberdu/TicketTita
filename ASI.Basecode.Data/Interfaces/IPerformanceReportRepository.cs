@@ -11,5 +11,6 @@ namespace ASI.Basecode.Data.Interfaces
     {
         Task AddPerformanceReportAsync(PerformanceReport performanceReport);
         Task UpdatePerformanceReportAsync(PerformanceReport performanceReport);
+        Task<PerformanceReport> GetPerformanceReportByAgentIdAsync(string agentId);
     }
 }

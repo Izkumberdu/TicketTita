@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/css/user.css" />
 }
 
+
 <div class="d-flex justify-content-end mx-4 mt-3 mb-2">
     <button type="button" class="btn-close custom-close-button" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
@@ -87,14 +88,12 @@
                     data: $(this).serialize(),
                     success: function (result) {
                         if (result.success) {
-
                             location.reload();
                         }
                     },
                 }
                         });
         });
-
         var errMessage = '@TempData["DuplicateErr"]';
         if (errMessage) {
             toastr.error(errMessage);

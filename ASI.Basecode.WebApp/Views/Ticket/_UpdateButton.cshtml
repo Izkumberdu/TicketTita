@@ -1,0 +1,71 @@
+﻿@model ASI.Basecode.Services.ServiceModels.TicketViewModel
+
+<div>
+    @if (User.IsInRole("Admin") || User.IsInRole("Support Agent"))
+    {
+        if (Model.StatusType.StatusName != "Resolved" && Model.StatusType.StatusName != "Closed")
+        {
+            if (!User.IsInRole("Admin") && (Model.TicketAssignment?.AgentId == null || Model.TicketAssignment?.AgentId == ViewBag.UserId))
+            {
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateTrackingModal">
+                    Update Status/Priority
+                </button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateAssignmentModal">
+                    Update Assignment
+                </button>
+                if (Model.TicketAssignment == null)
+                {
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateCategoryModal">
+                        Update Category
+                    </button>
+                }
+            }
+            else if (User.IsInRole("Admin"))
+            {
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateTrackingModal">
+                    Update Tracking
+                </button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateAssignmentModal">
+                    Update Assignment
+                </button>
+                if (Model.TicketAssignment == null)
+                {
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateCategoryModal">
+                        Update Category
+                    </button>
+                }
+            }
+        }
+    }
+    else
+    {
+        if (Model.StatusType.StatusName != "Resolved" && Model.StatusType.StatusName != "Closed")
+        {
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateTrackingModal">
+                Update Tracking
+            </button>
+
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editTicketModal">
+                Update Ticket
+            </button>
+            if (Model.TicketAssignment == null)
+            {
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateCategoryModal">
+                    Update Category
+                </button>
+            }
+        }
+        if (Model.StatusType.StatusName == "Closed")
+        {
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#reopenTicketModal">
+                Reopen Ticket
+            </button>
+        }
+        @if (Model.Feedback == null && User.IsInRole("Employee") && Model.StatusType.StatusName == "Resolved")
+        {
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#feedbackModal">
+                Provide Feedback
+            </button>
+        }
+    }
+</div>

@@ -130,21 +130,23 @@ namespace ASI.Basecode.WebApp.Mvc
             }
         }
 
-        public List<string> UserFilterDefaults
+        public string UserTicketSortPreference
         {
             get
             {
-                var filterDefaults = new List<string>();
-                var statusFilter = _userPreferences.GetUserPreferenceByKey(UserId, "defaultStatusFilter").Result;
-                var categoryFilter = _userPreferences.GetUserPreferenceByKey(UserId, "defaultCategoryFilter").Result;
-                var priorityFilter = _userPreferences.GetUserPreferenceByKey(UserId, "defaultPriorityFilter").Result;
-                var sortBy = _userPreferences.GetUserPreferenceByKey(UserId, "defaultSortBy").Result;
-                filterDefaults.Add(statusFilter.Value != null ? $"s:{statusFilter.Value}" : "s:All");
-                filterDefaults.Add(categoryFilter.Value != null ? $"c:{categoryFilter.Value}" : "c:All");
-                filterDefaults.Add(priorityFilter.Value != null ? $"p:{priorityFilter.Value}" : "p:All");
-                filterDefaults.Add(sortBy.Value != null ? $"sb:{sortBy.Value}" : "sb:Ticket ID (A-Z)");
+                var sortPreference = _userPreferences.GetUserPreferenceByKey(UserId, "defaultSortBy").Result;
+                if (sortPreference.Value == null) return null;
+                else return sortPreference.Value;
+            }
+        }
 
-                return filterDefaults;
+        public string UserTicketViewPreference
+        {
+            get
+            {
+                var viewPreference = _userPreferences.GetUserPreferenceByKey(UserId, "defaultShowOption").Result;
+                if (viewPreference.Value == null) return null;
+                else return viewPreference.Value;
             }
         }
 

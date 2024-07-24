@@ -55,7 +55,7 @@ namespace ASI.Basecode.Services.Services
             var ticket = await GetTicketByIdAsync(id);
             if (ticket == null) return null;
             if (ticket.StatusTypeId == "S4" && ticket.UserId != currentUserId) return null;
-            
+
             //if (currentUserRole.Contains("Support Agent"))
             //{
             //    var agent = await _teamRepository.FindAgentByIdAsync(currentUserId);
@@ -91,21 +91,11 @@ namespace ASI.Basecode.Services.Services
         /// <param name="filterBy">User defined filter category</param>
         /// <param name="filterValue">User defined filter value</param>
         /// <returns>IEnumerable TicketViewModel</returns>
-        public async Task<PaginatedList<TicketViewModel>> GetFilteredAndSortedTicketsAsync(string showOption, string sortBy, List<string> selectedFilters, string search, int pageIndex, int pageSize)
+        public async Task<PaginatedList<TicketViewModel>> GetFilteredAndSortedTicketsAsync(string showOption, string sortBy, List<string> selectedFilters, string search, bool clearFilters, int pageIndex, int pageSize)
         {
             var tickets = await GetAllAsync();
             var userRole = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            var userPreferences = _userPreferencesRepository.GetUserPreferences(userId);
-            userPreferences.TryGetValue("defaultShowOption", out var defaultShowOption);
-            userPreferences.TryGetValue("defaultSortBy", out var defaultSortBy);
-            userPreferences.TryGetValue("defaultStatusFilter", out var defaultStatusFilter);
-            userPreferences.TryGetValue("defaultPriorityFilter", out var defaultPriorityFilter);
-            userPreferences.TryGetValue("defaultCategoryFilter", out var defaultCategoryFilter);
-
-            showOption = string.IsNullOrEmpty(showOption) ? defaultShowOption : showOption;
-            sortBy = string.IsNullOrEmpty(sortBy) ? defaultSortBy : sortBy;
 
             if (!string.IsNullOrEmpty(userRole) && userRole.Contains("Employee"))
             {
@@ -128,47 +118,54 @@ namespace ASI.Basecode.Services.Services
                 tickets = tickets.Where(x => x.StatusType.StatusName != "Closed").ToList();
             }
 
-            bool clear = false;
-            if (defaultStatusFilter != null && (selectedFilters.Count == 0 || !selectedFilters.Exists(f => f != null && f.StartsWith("status:"))))
+            if (!clearFilters)
             {
-                selectedFilters.Add("status:" + defaultStatusFilter);
-                clear = true;
-            }
-            if (defaultPriorityFilter != null && (selectedFilters.Count == 0 || !selectedFilters.Exists(f => f != null && f.StartsWith("priority:"))))
-            {
-                selectedFilters.Add("priority:" + defaultPriorityFilter);
-                clear = true;
-            }
-            if (defaultCategoryFilter != null && (selectedFilters.Count == 0 || !selectedFilters.Exists(f => f != null && f.StartsWith("category:"))))
-            {
-                selectedFilters.Add("category:" + defaultCategoryFilter);
-                clear = true;
-            }
+                var userPreferences = _userPreferencesRepository.GetUserPreferences(userId);
+                userPreferences.TryGetValue("defaultShowOption", out var defaultShowOption);
+                userPreferences.TryGetValue("defaultSortBy", out var defaultSortBy);
+                userPreferences.TryGetValue("defaultStatusFilter", out var defaultStatusFilter);
+                userPreferences.TryGetValue("defaultPriorityFilter", out var defaultPriorityFilter);
+                userPreferences.TryGetValue("defaultCategoryFilter", out var defaultCategoryFilter);
 
-            if (selectedFilters.Any())
-            {
-                foreach (var filter in selectedFilters)
+                showOption = string.IsNullOrEmpty(showOption) ? defaultShowOption : showOption;
+                sortBy = string.IsNullOrEmpty(sortBy) ? defaultSortBy : sortBy;
+
+                if (defaultStatusFilter != null && (selectedFilters.Count == 0 || !selectedFilters.Exists(f => f != null && f.StartsWith("status:"))))
                 {
-                    if(filter == null) continue;
-                    var filterParts = filter.Split(":");
-                    var filterBy = filterParts[0];
-                    var filterValue = filterParts[1];
-
-                    if (filterValue == "all") continue;
-                    tickets = filterBy switch
-                    {
-                        "status" => tickets.Where(x => x.StatusTypeId == filterValue).ToList(),
-                        "priority" => tickets.Where(x => x.PriorityTypeId == filterValue).ToList(),
-                        "category" => tickets.Where(x => x.CategoryTypeId == filterValue).ToList(),
-                        "employee" => tickets.Where(x => x.UserId == filterValue).ToList(),
-                        "agent" => tickets.Where(x => x.TicketAssignment?.AgentId == filterValue).ToList(),
-                        "team" => tickets.Where(x => x.TicketAssignment?.TeamId == filterValue).ToList(),
-                        _ => tickets
-                    };
+                    selectedFilters.Add("status:" + defaultStatusFilter);
                 }
-                if (clear) selectedFilters.Clear();
-            }
+                if (defaultPriorityFilter != null && (selectedFilters.Count == 0 || !selectedFilters.Exists(f => f != null && f.StartsWith("priority:"))))
+                {
+                    selectedFilters.Add("priority:" + defaultPriorityFilter);
+                }
+                if (defaultCategoryFilter != null && (selectedFilters.Count == 0 || !selectedFilters.Exists(f => f != null && f.StartsWith("category:"))))
+                {
+                    selectedFilters.Add("category:" + defaultCategoryFilter);
+                }
 
+                if (selectedFilters.Any())
+                {
+                    foreach (var filter in selectedFilters)
+                    {
+                        if (filter == null) continue;
+                        var filterParts = filter.Split(":");
+                        var filterBy = filterParts[0];
+                        var filterValue = filterParts[1];
+
+                        if (filterValue == "all") continue;
+                        tickets = filterBy switch
+                        {
+                            "status" => tickets.Where(x => x.StatusTypeId == filterValue).ToList(),
+                            "priority" => tickets.Where(x => x.PriorityTypeId == filterValue).ToList(),
+                            "category" => tickets.Where(x => x.CategoryTypeId == filterValue).ToList(),
+                            "employee" => tickets.Where(x => x.UserId == filterValue).ToList(),
+                            "agent" => tickets.Where(x => x.TicketAssignment?.AgentId == filterValue).ToList(),
+                            "team" => tickets.Where(x => x.TicketAssignment?.TeamId == filterValue).ToList(),
+                            _ => tickets
+                        };
+                    }
+                }
+            }
 
             if (!string.IsNullOrEmpty(search))
             {
@@ -184,7 +181,7 @@ namespace ASI.Basecode.Services.Services
                 "created_desc" => tickets.OrderByDescending(t => t.CreatedDate).ToList(),
                 "created_asc" => tickets.OrderBy(t => t.CreatedDate).ToList(),
                 "updated_desc" => tickets.OrderByDescending(t => t.UpdatedDate).ToList(),
-                _ => tickets.OrderBy(t => t.TicketId).ToList(),
+                _ => tickets.OrderByDescending(t => t.UpdatedDate).ToList(),
             };
 
             var count = tickets.Count;

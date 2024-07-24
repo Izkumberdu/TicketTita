@@ -25,7 +25,6 @@ namespace ASI.Basecode.Data.Repositories
                         .Include(t => t.TeamMembers)
                             .ThenInclude(u => u.User)
                         .Include(t => t.TeamMembers)
-                            .ThenInclude(u => u.Report)
                         .Include(t => t.TicketAssignments)
                             .ThenInclude(a => a.Agent)
                         .Include(t => t.Specialization);
@@ -130,6 +129,7 @@ namespace ASI.Basecode.Data.Repositories
                         .Include(u => u.UpdatedByNavigation)
                         .Include(u => u.TeamMember)
                             .ThenInclude(tm => tm.Team)
+                        .Include(u => u.PerformanceReport)
                         .Include(u => u.ActivityLogs)
                         .Include(u => u.KnowledgeBaseArticles)
                         .Include(u => u.TicketAssignmentAgents)
@@ -138,7 +138,7 @@ namespace ASI.Basecode.Data.Repositories
         }
 
         public async Task<TeamMember> FindTeamMemberByIdAsync(string id) => 
-            await this.GetDbSet<TeamMember>().Include(u => u.Report).Include(u => u.Team).FirstOrDefaultAsync(tm => tm.UserId == id);
+            await this.GetDbSet<TeamMember>().Include(u => u.Team).FirstOrDefaultAsync(tm => tm.UserId == id);
 
         public async Task<bool> IsExistingTeamMember(string teamId, string agentId) =>
             await GetTeamsWithIncludes()
@@ -150,7 +150,17 @@ namespace ASI.Basecode.Data.Repositories
                         .Where(t => t.TicketAssignment.TeamId == teamId && t.StatusTypeId == "S3")
                         .Include(t => t.Feedback)
                             .ThenInclude(f => f.User)
+                            .ThenInclude(u => u.PerformanceReport)
                         .ToListAsync();
+        }
+
+        public async Task<List<Ticket>> GetResolvedTicketsAssignedToAgentAsync(string agentId)
+        {
+            return await this.GetDbSet<Ticket>()
+                .Include(t => t.TicketAssignment)
+                .Include(t => t.Feedback)
+                .Where(t => t.TicketAssignment != null && t.TicketAssignment.AgentId == agentId)
+                .ToListAsync();
         }
     }
 }

@@ -48,11 +48,6 @@ namespace ASI.Basecode.Services.Services
                     existingTicket.StatusType : await _repository.FindStatusByIdAsync(ticket.StatusTypeId);
             }
 
-            if (statusChanged && ticket.StatusTypeId.Equals("S3"))
-            {
-                await UpdateTeamPerformanceReportsAsync(existingTicket);
-            }
-
             if (priorityChanged)
             {
                 if (closedStatusList.Contains(currentStatus))
@@ -69,9 +64,8 @@ namespace ASI.Basecode.Services.Services
 
             if (statusChanged || priorityChanged)
             {
-                var updatedStatus = existingTicket.StatusType.StatusName.ToLower();
-                var updatedPriority = existingTicket.PriorityType.PriorityName;
-                await LogActivityAsync(existingTicket, _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value, "Update Tracking", $"Updated Status: {updatedStatus}, Updated Priority: {updatedPriority}");
+                await LogActivityAsync(existingTicket, _httpContextAccessor.HttpContext.User?.FindFirst(ClaimTypes.NameIdentifier).Value, $"Ticket Update",
+                    $"{(statusChanged ? "Status" : "")}{(statusChanged && priorityChanged ? " & " : "")}{(priorityChanged ? "Priority" : "")} modified");
             }
         }
     }

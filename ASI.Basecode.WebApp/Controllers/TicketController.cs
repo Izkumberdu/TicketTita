@@ -67,18 +67,17 @@ namespace ASI.Basecode.WebApp.Controllers
         [Authorize]
         [HttpGet]
         [Route("all")]
-        public async Task<IActionResult> GetAll(string showOption, string sortBy, List<string> selectedFilters, string search, int pageIndex = 1)
+        public async Task<IActionResult> GetAll(string showOption, string sortBy, List<string> selectedFilters, string search, bool clearFilters = false, int pageIndex = 1, int pageSize = 5)
         {
             return await HandleExceptionAsync(async () =>
             {
-                var pageSize = UserPaginationPreference;
-                var userDefaults = UserFilterDefaults;
-                var tickets = await _ticketService.GetFilteredAndSortedTicketsAsync(showOption, sortBy, selectedFilters, search, pageIndex, pageSize);
-                
-                ViewData["SortBy"] = sortBy;
+                var tickets = await _ticketService.GetFilteredAndSortedTicketsAsync(showOption, sortBy, selectedFilters, search, clearFilters, pageIndex, pageSize);
+
                 ViewData["Search"] = search;
-                ViewData["ShowOption"] = showOption;
-                await PopulateViewBagAsync(selectedFilters, userDefaults);
+                ViewData["SortBy"] = string.IsNullOrEmpty(sortBy) && !clearFilters ? UserTicketSortPreference : sortBy;
+                ViewData["ShowOption"] = string.IsNullOrEmpty(showOption) && !clearFilters ? UserTicketViewPreference : showOption;
+                ViewData["PageSize"] = pageSize;
+                await PopulateViewBagAsync(selectedFilters);
 
                 return View("ViewAll", tickets);
             }, "GetAll");
@@ -199,7 +198,7 @@ namespace ASI.Basecode.WebApp.Controllers
         /// Populates the view bag with the priority, status, category types and users
         /// Used for dropdowns in the view
         /// </summary>
-        private async Task PopulateViewBagAsync(List<string> selectedFilters, List<string> userDefaults)
+        private async Task PopulateViewBagAsync(List<string> selectedFilters)
         {
             var priorityTypes = await _ticketService.GetPriorityTypesAsync();
             var statusTypes = await _ticketService.GetStatusTypesAsync();
@@ -214,8 +213,6 @@ namespace ASI.Basecode.WebApp.Controllers
             ViewBag.Agents = users.Where(u => u.RoleId == "Support Agent").OrderBy(u => u.Name).Distinct().ToList();
             ViewBag.Teams = teams.OrderBy(t => t.Name).ToList();
             ViewBag.SelectedFilters = selectedFilters;
-
-            ViewBag.UserDefaults = userDefaults;
         }
     }
 }
